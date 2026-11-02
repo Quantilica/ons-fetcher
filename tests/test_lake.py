@@ -55,7 +55,9 @@ def test_convert_datasets_end_to_end(tmp_path: Path) -> None:
     carga_file = carga_dir / "carga-energia_2024@20261101.parquet"
     df_carga.write_parquet(carga_file)
 
-    # 2. Monthly dataset: curva-carga (Parquet)
+    # 2. Monthly dataset: fator-capacidade-2 (Parquet)
+    geracao_dir = raw_dir / "geracao"
+    geracao_dir.mkdir(parents=True)
     df_curva = pl.DataFrame(
         {
             "DIN_INSTANTE": ["2024-05-01 00:00:00", "2024-05-01 01:00:00"],
@@ -63,7 +65,7 @@ def test_convert_datasets_end_to_end(tmp_path: Path) -> None:
             "VAL_CARGAENERGIA": [42000.0, 41500.0],
         }
     )
-    curva_file = carga_dir / "curva-carga_2024-05@20261101.parquet"
+    curva_file = geracao_dir / "fator-capacidade-2_2024-05@20261101.parquet"
     df_curva.write_parquet(curva_file)
 
     # 3. Static dataset: capacidade-geracao (CSV)
@@ -92,7 +94,7 @@ def test_convert_datasets_end_to_end(tmp_path: Path) -> None:
     assert not errors_carga, f"Errors in carga-energia: {errors_carga}"
 
     # Verify curva-carga
-    ds_curva = lake_ons / "curva-carga"
+    ds_curva = lake_ons / "fator-capacidade-2"
     assert ds_curva.is_dir()
     assert (ds_curva / "_dataset.json").exists()
     assert (ds_curva / "ano=2024" / "mes=5").is_dir()
