@@ -134,9 +134,9 @@ def _entries_for_dataset(slug: str, meta: dict[str, Any]) -> list[DatasetEntry]:
         ]
 
     # static: arquivos cujo nome contém o prefixo; senão, o maior objeto
-    candidatos = [
-        o for o in objects if prefix.upper() in o["name"].upper()
-    ] or sorted(objects, key=lambda o: int(o.get("size") or 0), reverse=True)
+    candidatos = [o for o in objects if prefix.upper() in o["name"].upper()] or sorted(
+        objects, key=lambda o: int(o.get("size") or 0), reverse=True
+    )
     return [_entry(slug, meta, _best(candidatos))] if candidatos else []
 
 
