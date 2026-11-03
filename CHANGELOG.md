@@ -8,6 +8,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ## [Não lançado]
 
 ### Corrigido
+- Política de frescor volta a F1 (`HEAD_OR_MANIFEST`): `REMOTE_ONLY` (F3, para fontes sem validadores) causava re-download diário de fontes com Last-Modified/ETag, porque descartava o Last-Modified e o nome do arquivo caía em `@hoje`.
 - O catálogo passa a listar o bucket S3 público: diretórios e nomes mudaram
   (`curva-carga-ho`, `EAR_DIARIO_BACIAS`, `GERACAO_USINA-2`,
   `RELACIONAMENTO_USINA_CONJUNTO`), causando 404 em massa.
