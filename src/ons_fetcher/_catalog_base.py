@@ -133,7 +133,8 @@ class OnsDataset:
         name: Título do conjunto.
         s3_dir: Diretório do bucket S3 (nunca deduzido do slug).
         prefix: Prefixo dos nomes dos arquivos (vazio se não há arquivo).
-        granularity: ``annual``, ``monthly``, ``daily``, ``static`` ou ``external``.
+        granularity: ``annual``, ``monthly``, ``mixed`` (anual numa faixa e mensal
+            noutra), ``daily``, ``static`` ou ``external``.
         tier: ``r1`` (baixa hoje) ou ``listed`` (listado; download em release futura).
         formats: Formatos de dados publicados no bucket.
         note: Observação sobre o motivo de não baixar ou particularidades.
@@ -149,6 +150,7 @@ class OnsDataset:
     tier: Tier
     formats: tuple[str, ...] = ()
     note: str = ""
+    annual_prefix: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         """Converte o descritor em dict."""
@@ -168,6 +170,7 @@ def r1_datasets(group: str) -> dict[str, OnsDataset]:
             granularity=str(meta["granularity"]),
             tier="r1",
             formats=("parquet", "csv", "xlsx"),
+            annual_prefix=str(meta.get("annual_prefix", "")),
         )
         for slug, meta in R1_DATASETS_META.items()
         if meta["group"] == group

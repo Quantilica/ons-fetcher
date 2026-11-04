@@ -131,7 +131,7 @@ def discover(
             report.moved_dirs.append(
                 {"ckan_slug": ckan_slug, "catalogo": dataset.s3_dir, "atual": s3_dir}
             )
-        if dataset.granularity not in {"annual", "monthly", "daily"}:
+        if dataset.granularity not in {"annual", "monthly", "mixed", "daily"}:
             continue
         _, _, last = SNAPSHOT.get(ckan_slug, (0, "", ""))
         if not last:

@@ -132,21 +132,27 @@ def _entries_for_dataset(slug: str, meta: dict[str, Any]) -> list[DatasetEntry]:
         if not any(h in o["name"].lower() for h in _SKIP_NAME_HINTS)
     ]
 
-    if granularity == "annual":
+    entries: list[DatasetEntry] = []
+    if granularity in ("annual", "mixed"):
+        # faixa anual; em granularidade mista pode ter prefixo proprio
+        annual_prefix = str(meta.get("annual_prefix") or prefix)
         pattern = re.compile(
-            rf"^{re.escape(prefix)}_(\d{{4}})\.(parquet|csv|zip|xlsx)$", re.IGNORECASE
+            rf"^{re.escape(annual_prefix)}_(\d{{4}})\.(parquet|csv|zip|xlsx)$",
+            re.IGNORECASE,
         )
         por_ano: dict[int, list[dict[str, Any]]] = {}
         for obj in objects:
             match = pattern.match(obj["name"])
             if match:
                 por_ano.setdefault(int(match.group(1)), []).append(obj)
-        return [
+        entries += [
             _entry(slug, meta, _best(objs), year=year)
             for year, objs in sorted(por_ano.items())
         ]
+        if granularity == "annual":
+            return entries
 
-    if granularity == "monthly":
+    if granularity in ("monthly", "mixed"):
         pattern = re.compile(
             rf"^{re.escape(prefix)}_(\d{{4}})_(\d{{2}})\.(parquet|csv|zip|xlsx)$",
             re.IGNORECASE,
@@ -157,10 +163,11 @@ def _entries_for_dataset(slug: str, meta: dict[str, Any]) -> list[DatasetEntry]:
             if match:
                 key = (int(match.group(1)), int(match.group(2)))
                 por_mes.setdefault(key, []).append(obj)
-        return [
+        entries += [
             _entry(slug, meta, _best(objs), year=year, month=month)
             for (year, month), objs in sorted(por_mes.items())
         ]
+        return entries
 
     # static: arquivos cujo nome contém o prefixo; senão, o maior objeto
     candidatos = [o for o in objects if prefix.upper() in o["name"].upper()] or sorted(

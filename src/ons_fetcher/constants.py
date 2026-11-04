@@ -120,17 +120,21 @@ R1_DATASETS_META: dict[str, dict[str, Any]] = {
         "s3_dir": "geracao_usina_2_ho",
         "prefix": "GERACAO_USINA-2",
         "group": "geracao",
-        "granularity": "annual",
+        # anual (GERACAO_USINA-2_AAAA) ate 2021, mensal (..._AAAA_MM) desde 2022
+        "granularity": "mixed",
         "start_year": 2000,
         "name": "Geração de Energia por Usina (Horária)",
     },
     "fator-capacidade-2": {
         "s3_dir": "fator_capacidade_2_di",
         "prefix": "FATOR_CAPACIDADE-2",
+        # a faixa anual (2009-2021) usa outro prefixo: FATOR_CAPACIDADE_AAAA
+        "annual_prefix": "FATOR_CAPACIDADE",
         "group": "geracao",
-        "granularity": "monthly",
-        "start_year": 2012,
-        "name": "Fator de Capacidade por Usina (Mensal)",
+        # anual 2009-2021, mensal (FATOR_CAPACIDADE-2_AAAA_MM) desde 2022
+        "granularity": "mixed",
+        "start_year": 2009,
+        "name": "Fator de Capacidade por Usina",
     },
     # Preços
     "cmo-semanal": {

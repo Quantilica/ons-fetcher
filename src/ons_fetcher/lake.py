@@ -36,47 +36,67 @@ def _norm_col(col_name: str) -> str:
 
 def _match_dataset_and_partition(
     file_path: Path,
-) -> tuple[str, dict[str, int]] | None:
-    """Identify which dataset and partition a raw file belongs to."""
+) -> tuple[str, dict[str, int], str | None] | None:
+    """Identify which dataset and partition a raw file belongs to.
+
+    Devolve ``(dataset, particoes, periodicidade)``; ``periodicidade`` so e
+    preenchida nos conjuntos de granularidade mista.
+    """
     raw_name = file_path.stem.split("@")[0].lower()
 
     for slug, meta in R1_DATASETS_META.items():
         prefix_lower = meta["prefix"].lower()
         slug_norm = slug.replace("-", "_")
 
-        # Check if filename starts with slug or prefix
-        # e.g. "carga-energia_2024", "carga_energia_2024", "carga_energia_di_2024"
-        matched = False
+        # O nome comeca com o slug ou o prefixo, p.ex. "carga-energia_2024",
+        # "carga_energia_2024"; o resto ("2024", "2024-05") e o periodo.
+        rest: str | None = None
         candidates = [slug, slug_norm, prefix_lower, meta["s3_dir"].lower()]
-        for cand in candidates:
-            if (
-                raw_name == cand
-                or raw_name.startswith(f"{cand}_")
-                or raw_name.startswith(f"{cand}-")
-            ):
-                matched = True
+        if meta.get("annual_prefix"):
+            candidates.append(str(meta["annual_prefix"]).lower())
+        for cand in sorted(candidates, key=len, reverse=True):
+            for sep in ("_", "-"):
+                if raw_name.startswith(f"{cand}{sep}"):
+                    rest = raw_name[len(cand) + 1 :]
+                    break
+            if rest is not None:
                 break
-
-        if not matched:
+        if raw_name in candidates:
+            rest = ""
+        if rest is None:
             continue
 
         granularity = meta["granularity"]
         if granularity == "static":
-            return slug, {}
+            return slug, {}, None
+
+        month_m = re.search(r"(\d{4})[-_](\d{1,2})", rest)
+        year_m = re.search(r"(\d{4})", rest)
+
+        if granularity == "mixed":
+            # mensal: mes 1-12; anual: mes=0 (sentinela), sem colisao com o mensal
+            if month_m:
+                return (
+                    slug,
+                    {"ano": int(month_m.group(1)), "mes": int(month_m.group(2))},
+                    "mensal",
+                )
+            if year_m:
+                return slug, {"ano": int(year_m.group(1)), "mes": 0}, "anual"
+            continue
 
         if granularity == "monthly":
-            m = re.search(r"(\d{4})[-_](\d{1,2})", raw_name)
-            if m:
-                return slug, {"ano": int(m.group(1)), "mes": int(m.group(2))}
-            # Fallback for just year
-            y_m = re.search(r"(\d{4})", raw_name)
-            if y_m:
-                return slug, {"ano": int(y_m.group(1)), "mes": 1}
+            if month_m:
+                return (
+                    slug,
+                    {"ano": int(month_m.group(1)), "mes": int(month_m.group(2))},
+                    None,
+                )
+            if year_m:  # fallback so com o ano
+                return slug, {"ano": int(year_m.group(1)), "mes": 1}, None
 
-        if granularity == "annual":
-            m = re.search(r"(\d{4})", raw_name)
-            if m:
-                return slug, {"ano": int(m.group(1))}
+        if granularity == "annual" and year_m:
+            return slug, {"ano": int(year_m.group(1))}, None
 
     return None
 
@@ -125,7 +145,7 @@ class OnsLakeConverter:
             granularity = meta["granularity"]
             if granularity == "annual":
                 p_keys = ["ano"]
-            elif granularity == "monthly":
+            elif granularity in ("monthly", "mixed"):
                 p_keys = ["ano", "mes"]
             else:
                 p_keys = []
@@ -147,7 +167,7 @@ class OnsLakeConverter:
             if not matched:
                 continue
 
-            dataset_id, partitions = matched
+            dataset_id, partitions, periodicidade = matched
             if dataset_id not in target_datasets or dataset_id not in writers:
                 continue
 
@@ -187,8 +207,16 @@ class OnsLakeConverter:
                     else:
                         df = df.with_columns(pl.col(p_col).cast(pl.Int32))
 
-                writer.write_polars(df, src=raw_file, partitions=partitions or None)
-                res.converted += 1
+                if periodicidade is not None:
+                    df = df.with_columns(pl.lit(periodicidade).alias("periodicidade"))
+
+                written = writer.write_polars(
+                    df, src=raw_file, partitions=partitions or None
+                )
+                if written.status == "skipped":
+                    res.skipped += 1
+                else:
+                    res.converted += 1
             except Exception as exc:
                 res.errors.append(
                     f"Erro ao converter {raw_file.name} em {dataset_id}: {exc}"

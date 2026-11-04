@@ -107,3 +107,40 @@ def test_convert_datasets_end_to_end(tmp_path: Path) -> None:
     assert (ds_cap / "_dataset.json").exists()
     errors_cap = check_dataset(ds_cap)
     assert not errors_cap, f"Errors in capacidade-geracao: {errors_cap}"
+
+
+def test_granularidade_mista_sem_colisao_de_particoes(tmp_path: Path) -> None:
+    """Anual (mes=0) e mensal coexistem no mesmo dataset sem sobrescrever."""
+    raw = tmp_path / "raw" / "geracao"
+    raw.mkdir(parents=True)
+    lake = tmp_path / "lake"
+    lake.mkdir()
+    for nome in (
+        "geracao-usina-2_2021",  # anual
+        "geracao-usina-2_2022-01",  # mensal
+        "geracao-usina-2_2022-02",
+        "fator-capacidade-2_2021",
+        "fator-capacidade-2_2022-01",
+    ):
+        pl.DataFrame({"VAL": [1.0, 2.0]}).write_parquet(
+            raw / f"{nome}@20261101.parquet"
+        )
+
+    res = converter.convert(tmp_path / "raw", lake)
+    assert not res.errors
+    assert res.converted == 5
+
+    for slug, n in (("geracao-usina-2", 3), ("fator-capacidade-2", 2)):
+        ds = lake / "ons" / slug
+        assert not check_dataset(ds)
+        df = pl.concat(
+            [pl.read_parquet(p) for p in ds.rglob("*.parquet")], how="diagonal"
+        )
+        assert df.height == 2 * n
+        assert (ds / "ano=2021" / "mes=0").is_dir()
+        assert (ds / "ano=2022" / "mes=1").is_dir()
+        assert set(df["periodicidade"].unique().to_list()) == {"anual", "mensal"}
+    assert (lake / "ons" / "geracao-usina-2" / "ano=2022" / "mes=2").is_dir()
+
+    res2 = converter.convert(tmp_path / "raw", lake)
+    assert (res2.converted, res2.skipped) == (0, 5)

@@ -12,10 +12,11 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - `MACRO_ALIASES` (`avaliacao-da-operacao`, `programacao-da-operacao`, `integracao-de-instalacoes`, `energia`); `GROUP_ALIASES` agora mapeia para listas.
 - `quantilica ons catalogo [grupo] [--tier]`: catálogo estático completo, sem rede.
 - `quantilica ons discover [--json] [--fail-on-change]` e `ons_fetcher.discover.discover()`: detecta pacotes novos/removidos, diretórios S3 movidos e períodos posteriores ao snapshot (`catalog_snapshot.py`).
-- Pendência conhecida (não alterada nesta entrega): `geracao-usina-2` (anual até 2021, mensal desde 2022) e `fator-capacidade-2` (anual 2009-2021, mensal desde 2022) têm granularidade mista na fonte; o R1 baixa só uma das faixas. Exige decisão sobre as chaves de partição do lake.
+- `geracao-usina-2` e `fator-capacidade-2` com granularidade `mixed`: o catálogo cobre as duas faixas (anual `GERACAO_USINA-2_AAAA` / `FATOR_CAPACIDADE_AAAA`, esta com prefixo próprio, até 2021; mensal `..._AAAA_MM` desde 2022). No lake, partição `ano/mes` com `mes=0` para os arquivos anuais (sem colisão com o mensal) e coluna `periodicidade` (`anual`/`mensal`). Reconverter (`--force`) esses dois conjuntos se já houver parquet legado só da faixa mensal.
 - `list`/`sync` continuam restritos aos conjuntos R1 (ids inalterados).
 
 ### Corrigido
+- Lake: reconversão idempotente conta `skipped` (antes contava tudo como convertido).
 - Política de frescor volta a F1 (`HEAD_OR_MANIFEST`): `REMOTE_ONLY` (F3, para fontes sem validadores) causava re-download diário de fontes com Last-Modified/ETag, porque descartava o Last-Modified e o nome do arquivo caía em `@hoje`.
 - O catálogo passa a listar o bucket S3 público: diretórios e nomes mudaram
   (`curva-carga-ho`, `EAR_DIARIO_BACIAS`, `GERACAO_USINA-2`,
