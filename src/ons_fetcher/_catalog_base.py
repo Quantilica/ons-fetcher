@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import asdict, dataclass
-from typing import Any
+from typing import Any, Literal
+
+from .constants import R1_CKAN_SLUGS, R1_DATASETS_META
+
+Tier = Literal["r1", "listed"]
 
 
 @dataclass(frozen=True)
@@ -116,3 +120,55 @@ def monthly_datasets(
                 )
             )
     return entries
+
+
+@dataclass(frozen=True)
+class OnsDataset:
+    """Descritor estático de um conjunto do CKAN do ONS.
+
+    Attributes:
+        slug: Id estável do conjunto no catálogo (``base_id`` das entradas).
+        ckan_slug: Nome do pacote no CKAN do ONS.
+        group: Grupo (domínio) canônico.
+        name: Título do conjunto.
+        s3_dir: Diretório do bucket S3 (nunca deduzido do slug).
+        prefix: Prefixo dos nomes dos arquivos (vazio se não há arquivo).
+        granularity: ``annual``, ``monthly``, ``daily``, ``static`` ou ``external``.
+        tier: ``r1`` (baixa hoje) ou ``listed`` (listado; download em release futura).
+        formats: Formatos de dados publicados no bucket.
+        note: Observação sobre o motivo de não baixar ou particularidades.
+    """
+
+    slug: str
+    ckan_slug: str
+    group: str
+    name: str
+    s3_dir: str
+    prefix: str
+    granularity: str
+    tier: Tier
+    formats: tuple[str, ...] = ()
+    note: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        """Converte o descritor em dict."""
+        return asdict(self)
+
+
+def r1_datasets(group: str) -> dict[str, OnsDataset]:
+    """Constrói os descritores R1 de um grupo a partir de ``R1_DATASETS_META``."""
+    return {
+        slug: OnsDataset(
+            slug=slug,
+            ckan_slug=R1_CKAN_SLUGS.get(slug, slug),
+            group=group,
+            name=str(meta["name"]),
+            s3_dir=str(meta["s3_dir"]),
+            prefix=str(meta["prefix"]),
+            granularity=str(meta["granularity"]),
+            tier="r1",
+            formats=("parquet", "csv", "xlsx"),
+        )
+        for slug, meta in R1_DATASETS_META.items()
+        if meta["group"] == group
+    }

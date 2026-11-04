@@ -1,0 +1,140 @@
+{
+ "packages": [
+  {
+   "name": "ind_qualid_dfd_meano",
+   "title": "Dados dos indicadores de qualidade de energia da rede básica: DFD – desempenho da frequência em distúrbios -  mensal e anual",
+   "resources": [
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/ind_qualid_dfd_meano/DicionarioDados_Ind_Qualidade_DFD_MesAno.pdf",
+     "format": "PDF",
+     "name": "Dicionário de Dados"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/ind_qualid_dfd_meano/IND_QUALID_DFD_MEANO.parquet",
+     "format": "PARQUET",
+     "name": "Ind_Qualid_DFD_AnoMes"
+    }
+   ]
+  },
+  {
+   "name": "carga-energia",
+   "title": "Carga de Energia Diária",
+   "resources": [
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/carga_energia_di/DicionarioDados_Carga_Energia_Diaria.pdf",
+     "format": "PDF",
+     "name": "Dicionário de Dados"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/carga_energia_di/CARGA_ENERGIA_2024.parquet",
+     "format": "PARQUET",
+     "name": "Carga_Energia-2024"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/carga_energia_di/CARGA_ENERGIA_2025.parquet",
+     "format": "PARQUET",
+     "name": "Carga_Energia-2025"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/carga_energia_di/CARGA_ENERGIA_2026.parquet",
+     "format": "PARQUET",
+     "name": "Carga_Energia-2026"
+    }
+   ]
+  },
+  {
+   "name": "cmo-semanal",
+   "title": "CMO Semanal",
+   "resources": [
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/cmo_se/DicionarioDados_Cmo_Semanal.pdf",
+     "format": "PDF",
+     "name": "Dicionário de Dados"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/cmo_se/CMO_SEMANAL_2024.parquet",
+     "format": "PARQUET",
+     "name": "CMO_Semanal-2024"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/cmo_se/CMO_SEMANAL_2025.parquet",
+     "format": "PARQUET",
+     "name": "CMO_Semanal-2025"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/cmo_se/CMO_SEMANAL_2026.parquet",
+     "format": "PARQUET",
+     "name": "CMO_Semanal-2026"
+    }
+   ]
+  },
+  {
+   "name": "balanco_dessem_geral",
+   "title": "DESSEM - Balanço de Energia Geral",
+   "resources": [
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/balanco_dessem_geral/DicionarioDados_Balanco_Dessem_Geral.pdf",
+     "format": "PDF",
+     "name": "Dicionário de Dados"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/balanco_dessem_geral/BALANCO_DESSEM_GERAL_2026_11_02.parquet",
+     "format": "PARQUET",
+     "name": "Balanco_Dessem_Geral-2026-11-02"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/balanco_dessem_geral/BALANCO_DESSEM_GERAL_2026_11_03.parquet",
+     "format": "PARQUET",
+     "name": "Balanco_Dessem_Geral-2026-11-03"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/balanco_dessem_geral/BALANCO_DESSEM_GERAL_2026_11_04.parquet",
+     "format": "PARQUET",
+     "name": "Balanco_Dessem_Geral-2026-11-04"
+    }
+   ]
+  },
+  {
+   "name": "carga-energia-verificada",
+   "title": "Carga de Energia Verificada",
+   "resources": [
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/carga_verificada_tm/DicionarioDados_Carga_Verificada.pdf",
+     "format": "PDF",
+     "name": "Dicionário de Dados"
+    },
+    {
+     "url": "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/carga_verificada_tm/DicionarioDados_Carga_Verificada.pdf",
+     "format": "PDF",
+     "name": "Dicionário de Dados"
+    },
+    {
+     "url": "http://ons-dl-prod-opendata-swagger.s3-website-us-east-1.amazonaws.com",
+     "format": "API",
+     "name": "API de Carga Verificada"
+    }
+   ]
+  },
+  {
+   "name": "ambiente-colaborativo",
+   "title": "Ambiente Colaborativo - GITHUB",
+   "resources": [
+    {
+     "url": "https://ons-dl-prod-opendata.s3.amazonaws.com/dataset/github/Passo_a_Passo_Publicacao_no_GITHUB_ONS.pdf",
+     "format": "PDF",
+     "name": "Orientação para Publicação no GitHub"
+    },
+    {
+     "url": "https://ons-dl-prod-opendata.s3.amazonaws.com/dataset/github/Passo_a_Passo_Publicacao_no_GITHUB_ONS.pdf",
+     "format": "PDF",
+     "name": "Orientação para Publicação no GitHub"
+    },
+    {
+     "url": "https://ons-dl-prod-opendata.s3.amazonaws.com/dataset/github/OrientacaoUsoAmbienteColaboracao.pdf",
+     "format": "PDF",
+     "name": "Orientação sobre Uso do Ambiente Colaborativo"
+    }
+   ]
+  }
+ ]
+}
