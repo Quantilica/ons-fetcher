@@ -34,8 +34,12 @@ uv add 'ons-fetcher[analysis]' --index https://index.quantilica.com/simple/
 ## Uso via CLI
 
 ```bash
-# Listar conjuntos disponíveis
+# Listar os arquivos dos conjuntos R1 (os que baixam hoje)
 quantilica ons list
+
+# Catálogo completo (R1 + listados) e descoberta de novidades na fonte
+quantilica ons catalogo programacao
+quantilica ons discover
 
 # Verificar novos arquivos e frescor
 quantilica ons check
@@ -46,6 +50,25 @@ quantilica ons sync -o /data/ons
 # Converter acervo bruto para o Universal Hive Parquet Lake
 quantilica ons convert /data/ons /data/lake
 ```
+
+## Cobertura do catálogo
+
+O CKAN do ONS publica 88 pacotes (2026-11-03). O catálogo cobre os 88: 87 conjuntos
+em 8 grupos e 1 link externo excluído.
+
+| Grupo | Conjuntos | R1 (baixa) | Listado |
+|---|---:|---:|---:|
+| carga | 8 | 3 | 5 |
+| hidrologia | 17 | 9 | 8 |
+| geracao | 13 | 2 | 11 |
+| precos | 4 | 3 | 1 |
+| intercambio | 6 | 3 | 3 |
+| cadastros | 9 | 3 | 6 |
+| programacao | 7 | 0 | 7 |
+| indicadores | 23 | 0 | 23 |
+
+`list` e `sync` operam só no tier R1; os demais ficam listados (`catalogo`) com
+download previsto para releases futuras.
 
 ## Licença
 

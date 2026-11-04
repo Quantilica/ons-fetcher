@@ -8,6 +8,12 @@ CKAN_BASE_URL = "https://dados.ons.org.br/api/3"
 S3_BASE_URL = "https://ons-aws-prod-opendata.s3.amazonaws.com/dataset"
 S3_LIST_URL = "https://ons-aws-prod-opendata.s3.amazonaws.com/"
 
+# Chaves R1 cujo slug CKAN difere da chave (a chave é o id estável no disco/lake).
+R1_CKAN_SLUGS: dict[str, str] = {
+    "ear-diario-por-ree": "ear-diario-por-ree-reservatorio-equivalente-de-energia",
+    "ena-diario-por-ree": "ena-diario-por-ree-reservatorio-equivalente-de-energia",
+}
+
 # S3 dataset descriptors for R1 datasets:
 # (ckan_slug, s3_dir, file_prefix, group, granularity, start_year)
 R1_DATASETS_META: dict[str, dict[str, Any]] = {

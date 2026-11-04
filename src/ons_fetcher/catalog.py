@@ -2,8 +2,15 @@
 
 Os descritores em :data:`R1_DATASETS_META` dizem *o que* cada dataset é
 (grupo, granularidade, prefixo), mas não *qual arquivo* existe hoje: o ONS
-renomeia e muda a extensão dos objetos sem aviso. O catálogo lista o bucket
-S3 público e monta uma entrada por objeto real, evitando 404 em massa.
+renomeia e muda a extensão dos objetos sem aviso. O catálogo lista o bucket S3
+público e monta uma entrada por objeto real, evitando 404 em massa.
+
+O catálogo é em duas camadas, com um módulo ``catalog_<dominio>.py`` por grupo:
+
+- ``tier="r1"``: baixa hoje; é o que :func:`list_datasets` devolve (e o que o
+  ``sync`` baixa);
+- ``tier="listed"``: conhecido e catalogado, com download em release futura;
+  visível em :func:`catalog_rows` e no comando ``catalogo``.
 """
 
 from __future__ import annotations
@@ -11,7 +18,17 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from ._catalog_base import DatasetEntry, GroupInfo
+from . import (
+    catalog_cadastros,
+    catalog_carga,
+    catalog_geracao,
+    catalog_hidrologia,
+    catalog_indicadores,
+    catalog_intercambio,
+    catalog_precos,
+    catalog_programacao,
+)
+from ._catalog_base import DatasetEntry, GroupInfo, OnsDataset
 from .client import OnsClient
 from .constants import R1_DATASETS_META, S3_BASE_URL
 
@@ -20,19 +37,31 @@ __all__ = [
     "GroupInfo",
     "GROUPS",
     "GROUP_ALIASES",
+    "MACRO_ALIASES",
+    "CATALOG",
+    "OnsDataset",
+    "catalog_rows",
+    "expand_group",
     "list_datasets",
 ]
 
-GROUP_NAMES: dict[str, str] = {
-    "carga": "Carga e Demanda do SIN",
-    "hidrologia": "Hidrologia, EAR e ENA",
-    "geracao": "Geração e Fator de Capacidade",
-    "precos": "Preços e Custo Marginal de Operação (CMO)",
-    "intercambio": "Intercâmbio e Balanço de Energia",
-    "cadastros": "Cadastros de Usinas e Reservatórios",
-    "programacao": "Programação da Operação (R2)",
-    "indicadores": "Indicadores de Desempenho e Qualidade (R2)",
+_MODULES = [
+    catalog_carga,
+    catalog_hidrologia,
+    catalog_geracao,
+    catalog_precos,
+    catalog_intercambio,
+    catalog_cadastros,
+    catalog_programacao,
+    catalog_indicadores,
+]
+
+# slug -> descritor, de todos os conjuntos catalogados (R1 e listados).
+CATALOG: dict[str, OnsDataset] = {
+    slug: ds for mod in _MODULES for slug, ds in mod.DATASETS.items()
 }
+
+GROUP_NAMES: dict[str, str] = {mod.GROUP: mod.NAME for mod in _MODULES}
 
 # cache por processo: s3_dir -> lista de objetos
 _KEYS_CACHE: dict[str, list[dict[str, Any]]] = {}
@@ -160,29 +189,76 @@ GROUPS: dict[str, dict[str, Any]] = {
     grp: {"name": name, "entries": []} for grp, name in GROUP_NAMES.items()
 }
 
-GROUP_ALIASES: dict[str, str] = {
-    "padrao": "carga",
-    "sin": "carga",
-    "hidro": "hidrologia",
-    "ear": "hidrologia",
-    "ena": "hidrologia",
-    "cmo": "precos",
-    "preco": "precos",
-    "usinas": "geracao",
-    "troca": "intercambio",
-    "cadastro": "cadastros",
+# Macro-aliases: um apelido que engloba vários grupos canônicos (as áreas do CKAN).
+MACRO_ALIASES: dict[str, list[str]] = {
+    "avaliacao-da-operacao": [
+        "carga",
+        "hidrologia",
+        "geracao",
+        "intercambio",
+        "indicadores",
+    ],
+    "programacao-da-operacao": ["programacao", "precos"],
+    "integracao-de-instalacoes": ["cadastros"],
+    "energia": ["carga", "geracao", "precos", "intercambio"],
+}
+
+GROUP_ALIASES: dict[str, list[str]] = {
+    **MACRO_ALIASES,
+    "padrao": ["carga"],
+    "sin": ["carga"],
+    "hidro": ["hidrologia"],
+    "ear": ["hidrologia"],
+    "ena": ["hidrologia"],
+    "cmo": ["precos"],
+    "preco": ["precos"],
+    "usinas": ["geracao"],
+    "troca": ["intercambio"],
+    "cadastro": ["cadastros"],
 }
 
 
-def list_datasets(group: str | None = None) -> list[dict[str, Any]]:
-    """Lista os objetos reais do bucket, por grupo."""
-    if group is None:
-        entries: list[dict[str, Any]] = []
-        for group_id in GROUPS:
-            entries.extend(_group_entries(group_id))
-        return entries
+def expand_group(key: str) -> list[str]:
+    """Expande um grupo, alias ou macro-alias em ids canônicos de grupo.
 
-    canon = GROUP_ALIASES.get(group, group)
-    if canon not in GROUPS:
-        raise ValueError(f"Grupo desconhecido: {group!r}")
-    return list(_group_entries(canon))
+    Raises:
+        ValueError: Se ``key`` não for grupo nem alias.
+    """
+    if key in GROUPS:
+        return [key]
+    targets = GROUP_ALIASES.get(key)
+    if targets is None:
+        raise ValueError(f"Grupo desconhecido: {key!r}")
+    return [t for t in targets if t in GROUPS]
+
+
+def list_datasets(group: str | None = None) -> list[dict[str, Any]]:
+    """Lista os objetos reais do bucket dos conjuntos R1, por grupo.
+
+    Só o tier ``r1`` baixa hoje; os conjuntos ``listed`` aparecem em
+    :func:`catalog_rows`.
+    """
+    groups = list(GROUPS) if group is None else expand_group(group)
+    entries: list[dict[str, Any]] = []
+    for group_id in groups:
+        for entry in _group_entries(group_id):
+            if entry not in entries:
+                entries.append(entry)
+    return entries
+
+
+def catalog_rows(
+    group: str | None = None, tier: str | None = None
+) -> list[dict[str, Any]]:
+    """Linhas do catálogo estático (um conjunto por linha), sem rede.
+
+    Args:
+        group: Grupo, alias ou macro-alias; ``None`` lista todos.
+        tier: ``"r1"`` ou ``"listed"``; ``None`` lista ambos.
+    """
+    groups = set(GROUPS if group is None else expand_group(group))
+    return [
+        ds.to_dict()
+        for ds in CATALOG.values()
+        if ds.group in groups and (tier is None or ds.tier == tier)
+    ]
