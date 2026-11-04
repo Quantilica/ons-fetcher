@@ -5,7 +5,7 @@ Todas as alterações notáveis neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/),
 e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
+## [0.2.0] - 2026-11-04
 
 ### Adicionado
 - Catálogo completo por domínio (`catalog_<dominio>.py`, 8 grupos): os 88 pacotes do CKAN do ONS (2026-11-03) estão catalogados (87 conjuntos + 1 link externo excluído), com `s3_dir`, prefixo, granularidade e `tier` (`r1` baixa hoje; `listed` = listado, download em release futura). R1 segue com 23 conjuntos; `programacao` (7) e `indicadores` (23) ficam como listados.
