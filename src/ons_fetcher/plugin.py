@@ -47,7 +47,7 @@ def convert(
     try:
         from ons_fetcher import lake
     except ImportError as exc:
-        raise RuntimeError(
+        raise ImportError(
             "Conversão para o lake requer o extra 'analysis'. "
             "Instale com: quantilica install ons --extra analysis"
         ) from exc
