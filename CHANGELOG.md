@@ -7,8 +7,8 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Não lançado]
 
-### Corrigido
-- Sem o extra `analysis`, o comando `convert` termina com código 1 e a instrução de instalação (`quantilica install ons --extra analysis`), sem traceback.
+### Alterado
+- A saída do CLI passa a usar o console Rich em vez de `typer.echo`.
 
 ## [0.2.0] - 2026-11-04
 
@@ -27,6 +27,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
   (`curva-carga-ho`, `EAR_DIARIO_BACIAS`, `GERACAO_USINA-2`,
   `RELACIONAMENTO_USINA_CONJUNTO`), causando 404 em massa.
 - Um formato por arquivo (parquet > csv > zip > xlsx), sem duplicar anos.
+- Sem o extra `analysis`, o comando `convert` termina com código 1 e a instrução de instalação (`quantilica install ons --extra analysis`), sem traceback.
 
 ## [0.1.0] - 2026-11-01
 
