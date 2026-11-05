@@ -9,10 +9,19 @@ from typing import Any
 
 import typer
 from quantilica.cli.sdk import FetcherApp, make_resolve_groups
+from quantilica.cli.ui import get_console
 from quantilica.core.sync import FreshnessPolicy
 
 from .catalog import GROUP_ALIASES, GROUPS, catalog_rows, list_datasets
 from .storage import DataRepository
+
+console = get_console()
+
+
+def _out(text: str) -> None:
+    """Imprime texto literal no console Rich compartilhado (sem markup/quebra)."""
+    console.print(text, markup=False, highlight=False, emoji=False, soft_wrap=True)
+
 
 resolve_groups = make_resolve_groups(GROUPS, GROUP_ALIASES)
 
@@ -62,15 +71,15 @@ def catalogo(
     """Mostra o catálogo completo de conjuntos (R1 e listados, sem rede)."""
     rows = catalog_rows(grupo, tier)
     if as_json:
-        typer.echo(json.dumps(rows, ensure_ascii=False, indent=2))
+        _out(json.dumps(rows, ensure_ascii=False, indent=2))
         return
     for row in rows:
-        typer.echo(
+        _out(
             f"{row['group']:<12} {row['tier']:<6} {row['granularity']:<9} "
             f"{row['slug']}  ({row['s3_dir']})"
         )
     n_r1 = sum(1 for r in rows if r["tier"] == "r1")
-    typer.echo(f"\n{len(rows)} conjunto(s): {n_r1} R1, {len(rows) - n_r1} listados.")
+    _out(f"\n{len(rows)} conjunto(s): {n_r1} R1, {len(rows) - n_r1} listados.")
 
 
 def discover_cmd(
@@ -84,24 +93,22 @@ def discover_cmd(
 
     report = discover()
     if as_json:
-        typer.echo(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+        _out(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
     else:
-        typer.echo(f"{report.known} conjunto(s) do catálogo encontrados no CKAN.")
+        _out(f"{report.known} conjunto(s) do catálogo encontrados no CKAN.")
         for pkg in report.new_packages:
-            typer.echo(f"NOVO     {pkg['ckan_slug']} ({pkg['s3_dir']}): {pkg['title']}")
+            _out(f"NOVO     {pkg['ckan_slug']} ({pkg['s3_dir']}): {pkg['title']}")
         for slug in report.removed_packages:
-            typer.echo(f"REMOVIDO {slug}")
+            _out(f"REMOVIDO {slug}")
         for moved in report.moved_dirs:
-            typer.echo(
+            _out(
                 f"MOVIDO   {moved['ckan_slug']}: "
                 f"{moved['catalogo']} -> {moved['atual']}"
             )
         for slug, periods in report.new_periods.items():
-            typer.echo(
-                f"PERÍODOS {slug}: {periods[0]} .. {periods[-1]} ({len(periods)})"
-            )
+            _out(f"PERÍODOS {slug}: {periods[0]} .. {periods[-1]} ({len(periods)})")
         if not report.has_changes:
-            typer.echo("Sem novidades em relação ao catálogo.")
+            _out("Sem novidades em relação ao catálogo.")
     if fail_on_change and report.has_changes:
         raise typer.Exit(1)
 
