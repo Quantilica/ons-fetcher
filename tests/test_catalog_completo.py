@@ -69,3 +69,20 @@ def test_s3_dir_vem_do_catalogo_nao_do_slug() -> None:
     assert CATALOG["carga-energia"].s3_dir == "carga_energia_di"
     assert CATALOG["balanco_dessem_geral"].granularity == "daily"
     assert CATALOG["carga-energia-verificada"].granularity == "external"
+
+
+def test_falha_de_listagem_nao_some_em_silencio(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Diretório fora do ar: warning com o slug, exceção e nada de cache parcial."""
+    from ons_fetcher import catalog
+
+    def boom(self: object, s3_dir: str) -> list[dict[str, object]]:
+        raise OSError("sem rede")
+
+    monkeypatch.setattr(catalog.OnsClient, "list_dataset_keys", boom)
+    monkeypatch.setattr(catalog, "_KEYS_CACHE", {})
+    with caplog.at_level("WARNING"), pytest.raises(catalog.CatalogListingError):
+        catalog._group_entries("carga")
+    assert "sem rede" in caplog.text
+    assert "carga" not in catalog._GROUP_CACHE

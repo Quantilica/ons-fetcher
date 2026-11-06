@@ -18,6 +18,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from quantilica.core.logging import get_logger
+
 from . import (
     catalog_cadastros,
     catalog_carga,
@@ -66,6 +68,8 @@ GROUP_NAMES: dict[str, str] = {mod.GROUP: mod.NAME for mod in _MODULES}
 # cache por processo: s3_dir -> lista de objetos
 _KEYS_CACHE: dict[str, list[dict[str, Any]]] = {}
 # cache por processo: grupo -> entradas montadas
+logger = get_logger(__name__)
+
 _GROUP_CACHE: dict[str, list[dict[str, Any]]] = {}
 
 _SKIP_NAME_HINTS = ("dicionario", "dictionary", "metadados")
@@ -176,18 +180,34 @@ def _entries_for_dataset(slug: str, meta: dict[str, Any]) -> list[DatasetEntry]:
     return [_entry(slug, meta, _best(candidatos))] if candidatos else []
 
 
+class CatalogListingError(RuntimeError):
+    """A listagem de um ou mais diretórios do bucket falhou."""
+
+
 def _group_entries(group: str) -> list[dict[str, Any]]:
-    """Entradas do grupo (descobertas uma vez por processo)."""
+    """Entradas do grupo (descobertas uma vez por processo).
+
+    Falha na listagem de um diretório é registrada (``warning``) e, ao final do
+    grupo, levanta :class:`CatalogListingError`; o resultado parcial não é
+    guardado em cache, para que um diretório fora do ar não suma do catálogo
+    em silêncio.
+    """
     if group in _GROUP_CACHE:
         return _GROUP_CACHE[group]
     entries: list[dict[str, Any]] = []
+    falhas: list[str] = []
     for slug, meta in R1_DATASETS_META.items():
         if meta["group"] != group:
             continue
         try:
             entries.extend(e.to_dict() for e in _entries_for_dataset(slug, meta))
-        except Exception:  # noqa: BLE001 - um diretório fora do ar não derruba o grupo
-            continue
+        except Exception as exc:  # noqa: BLE001 - registra e segue p/ listar todas as falhas
+            logger.warning("Falha ao listar o diretório de %s: %s", slug, exc)
+            falhas.append(slug)
+    if falhas:
+        raise CatalogListingError(
+            f"Listagem falhou no grupo {group!r}: {', '.join(falhas)}"
+        )
     _GROUP_CACHE[group] = entries
     return entries
 
