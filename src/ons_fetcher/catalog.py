@@ -65,11 +65,11 @@ CATALOG: dict[str, OnsDataset] = {
 
 GROUP_NAMES: dict[str, str] = {mod.GROUP: mod.NAME for mod in _MODULES}
 
+logger = get_logger(__name__)
+
 # cache por processo: s3_dir -> lista de objetos
 _KEYS_CACHE: dict[str, list[dict[str, Any]]] = {}
 # cache por processo: grupo -> entradas montadas
-logger = get_logger(__name__)
-
 _GROUP_CACHE: dict[str, list[dict[str, Any]]] = {}
 
 _SKIP_NAME_HINTS = ("dicionario", "dictionary", "metadados")
