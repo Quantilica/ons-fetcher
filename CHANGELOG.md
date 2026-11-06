@@ -7,6 +7,8 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Não lançado]
 
+## [0.2.1] - 2026-11-06
+
 ### Corrigido
 - Falha ao listar o diretório de um conjunto no bucket do ONS deixa de sumir do catálogo em silêncio: é registrada em `warning` com o conjunto e o erro, o resultado parcial não é guardado em cache e `list`/`sync` terminam com erro (`CatalogListingError`).
 
