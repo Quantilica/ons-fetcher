@@ -10,6 +10,7 @@ from typing import Any
 import typer
 from quantilica.cli.sdk import FetcherApp, make_resolve_groups
 from quantilica.cli.ui import get_console
+from quantilica.core.registry import FetcherInfo
 from quantilica.core.sync import FreshnessPolicy
 
 from .catalog import GROUP_ALIASES, GROUPS, catalog_rows, list_datasets
@@ -36,6 +37,14 @@ def path_builder(
 fetcher = FetcherApp(
     name="ons",
     help="Coletor e conversor Lake Hive de dados abertos do ONS",
+    info=FetcherInfo(
+        id="ons",
+        nome="ONS - Dados Abertos",
+        orgao="Operador Nacional do Sistema Elétrico (ONS)",
+        homepage="https://dados.ons.org.br",
+        cadencia="daily",
+        dominio="energia",
+    ),
     groups_dict=GROUPS,
     aliases_dict=GROUP_ALIASES,
     list_datasets=list_datasets,
