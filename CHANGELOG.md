@@ -12,6 +12,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ### Alterado
 - Requer `quantilica-core>=0.19.0` (e `quantilica-cli>=0.17.0` como host).
+- `FetcherInfo.licenca` passa a declarar a licença da fonte: CC BY (evidência: https://dados.ons.org.br/dataset/carga-energia).
 
 ## [0.2.1] - 2026-11-06
 

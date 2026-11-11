@@ -41,6 +41,7 @@ fetcher = FetcherApp(
         id="ons",
         nome="ONS - Dados Abertos",
         orgao="Operador Nacional do Sistema Elétrico (ONS)",
+        licenca="Creative Commons Atribuição (CC BY)",
         homepage="https://dados.ons.org.br",
         cadencia="daily",
         dominio="energia",
