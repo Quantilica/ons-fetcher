@@ -25,7 +25,7 @@
     {
       "nome": "val_cargaenergiamwmed",
       "tipos": [
-        "large_string"
+        "double"
       ]
     }
   ],

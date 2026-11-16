@@ -18,13 +18,12 @@ dataset:
     val_longitudesecoletora: "graus"
     val_latitudepontoconexao: "graus"
     val_longitudepontoconexao: "graus"
-    val_geracaoprogramada: "MWmed (texto)"
-    val_geracaoverificada: "MWmed (texto)"
-    val_capacidadeinstalada: "MW (texto)"
-    val_fatorcapacidade: "razão geração/capacidade (texto até 2025)"
+    val_geracaoprogramada: "MWmed"
+    val_geracaoverificada: "MWmed"
+    val_capacidadeinstalada: "MW"
+    val_fatorcapacidade: "razão geração/capacidade"
   dados_pessoais: nenhum
-  eras:
-    - {desde: 2026, mudanca: "`val_fatorcapacidade`: texto até 2025, decimal desde 2026"}
+  eras: []
   revisado_em: 2026-11-15
   versao_fetcher: 0.3.0
 ---
@@ -54,9 +53,9 @@ Fator de capacidade de usinas e conjuntos eólicos e solares despachados pelo ON
 | Partições | `ano`, `mes` |
 | Chave | `ano`, `mes`, `nom_usina_conjunto`, `id_ons`, `din_instante` |
 | Colunas | 22 |
-| Unidades de medida | `val_latitudesecoletora`: graus; `val_longitudesecoletora`: graus; `val_latitudepontoconexao`: graus; `val_longitudepontoconexao`: graus; `val_geracaoprogramada`: MWmed (texto); `val_geracaoverificada`: MWmed (texto); `val_capacidadeinstalada`: MW (texto); `val_fatorcapacidade`: razão geração/capacidade (texto até 2025) |
+| Unidades de medida | `val_latitudesecoletora`: graus; `val_longitudesecoletora`: graus; `val_latitudepontoconexao`: graus; `val_longitudepontoconexao`: graus; `val_geracaoprogramada`: MWmed; `val_geracaoverificada`: MWmed; `val_capacidadeinstalada`: MW; `val_fatorcapacidade`: razão geração/capacidade |
 | Dados pessoais | nenhum |
-| Eras | 2026: `val_fatorcapacidade`: texto até 2025, decimal desde 2026 |
+| Eras | nenhuma |
 | Revisado em | 2026-11-15 |
 | Versão do fetcher | 0.3.0 |
 
@@ -72,8 +71,6 @@ Fator de capacidade de usinas e conjuntos eólicos e solares despachados pelo ON
 
 - Unidade de análise: o fator de capacidade de uma usina ou conjunto eólico ou solar em uma hora.
 - 5 arquivos convertidos (amostra), de 2009 a 2026-10: 6.958 linhas no primeiro e 175.560 no último; 1.764.382 linhas no total. O arquivo do ano corrente cresce a cada atualização.
-- Mudanças de tipo entre arquivos (conferidas nos Parquet convertidos):
-    - 2026: `val_fatorcapacidade`: texto até 2025, decimal desde 2026.
 
 ## Variáveis
 
@@ -98,10 +95,10 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `id_ons` | `id_ons` | texto | Identificador da usina ou conjunto no ONS | — | todo |
 | `ceg` | `ceg` | texto | Código Único do Empreendimento de Geração (CEG), estabelecido pela ANEEL | — | todo |
 | `din_instante` | `din_instante` | data e hora | Data | — | todo |
-| `val_geracaoprogramada` | `val_geracaoprogramada` | texto | Geração Programada, em MWmed | MWmed (texto) | todo |
-| `val_geracaoverificada` | `val_geracaoverificada` | texto | Geração Verificada, em MWmed | MWmed (texto) | todo |
-| `val_capacidadeinstalada` | `val_capacidadeinstalada` | texto | Capacidade instalada, em MW | MW (texto) | todo |
-| `val_fatorcapacidade` | `val_fatorcapacidade` | decimal (texto em parte dos arquivos) | Fator de capacidade, obtida pela relação entre a geração e a capacidade instalada | razão geração/capacidade (texto até 2025) | todo |
+| `val_geracaoprogramada` | `val_geracaoprogramada` | decimal | Geração Programada, em MWmed | MWmed | todo |
+| `val_geracaoverificada` | `val_geracaoverificada` | decimal | Geração Verificada, em MWmed | MWmed | todo |
+| `val_capacidadeinstalada` | `val_capacidadeinstalada` | decimal | Capacidade instalada, em MW | MW | todo |
+| `val_fatorcapacidade` | `val_fatorcapacidade` | decimal | Fator de capacidade, obtida pela relação entre a geração e a capacidade instalada | razão geração/capacidade | todo |
 | `periodicidade` | — (gerada) | texto | Periodicidade do arquivo de origem: `anual` ou `mensal` | `anual`, `mensal` | todo |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 | `mes` | — (partição) | inteiro | Mês do arquivo de origem; 0 nos arquivos anuais | — | todo |
@@ -109,7 +106,7 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 ## No lake
 
 - Dataset `ons/fator-capacidade-2`, particionado por `ano`, `mes`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`FATOR_CAPACIDADE-2_AAAA`; `_AAAA_MM` nos mensais, com `mes = 0` nos anuais); se o arquivo não tiver a coluna, o conversor a acrescenta.
 - A coluna `periodicidade` (`anual` ou `mensal`) é acrescentada pelo conversor.
 
@@ -117,9 +114,8 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 
 - **Cada arquivo é a série do período, com o ano corrente em atualização.** O ONS reenvia o arquivo do ano (ou do mês) corrente e avisa que os dados passam por consistência; valores já publicados podem mudar. Reconverta depois de cada atualização antes de fechar um período.
 - **Granularidade mista:** os arquivos anuais (de 2009 a 2021, com o prefixo `FATOR_CAPACIDADE`) e os mensais (desde 2022, `FATOR_CAPACIDADE-2`) convivem em `ano` e `mes`, com `mes = 0` para os anuais e a coluna `periodicidade`.
-- `val_geracaoprogramada`, `val_geracaoverificada` e `val_capacidadeinstalada` chegam como texto em todos os arquivos (`val_fatorcapacidade` também, exceto no arquivo mais recente convertido); converta com `CAST`.
+- `val_geracaoprogramada`, `val_geracaoverificada` e `val_capacidadeinstalada` são texto na origem em todos os arquivos (`val_fatorcapacidade` também, exceto no arquivo mais recente); o conversor os grava como `double`. Parte das linhas de `val_geracaoprogramada` vem com texto vazio no Parquet; o lake as grava como nulo, igual ao CSV de origem.
 - A coluna `nom_localizacao` só tem conteúdo para usinas da região Nordeste (descrição oficial).
-- **Colunas numéricas com tipo misto entre arquivos.** 1 coluna(s) (`val_fatorcapacidade`) chegam como texto em alguns anos e como decimal em outros (o texto traz oito casas decimais e o zero como `0E-8`); veja as mudanças acima. Ao ler vários anos juntos, converta com `CAST(... AS DOUBLE)`.
 
 ## Exemplos
 
@@ -129,7 +125,7 @@ Fator de capacidade médio das usinas solares e eólicas em 2026-10, por tipo.
 import duckdb
 
 duckdb.sql("""
-    SELECT nom_tipousina, round(avg(CAST(val_fatorcapacidade AS DOUBLE)), 3) AS fator_medio
+    SELECT nom_tipousina, round(avg(val_fatorcapacidade), 3) AS fator_medio
     FROM read_parquet('lake/ons/fator-capacidade-2/**/*.parquet', hive_partitioning = true, union_by_name = true)
     WHERE ano = 2026 AND mes = 10
     GROUP BY 1

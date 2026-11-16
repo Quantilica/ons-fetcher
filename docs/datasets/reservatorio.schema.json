@@ -79,31 +79,31 @@
     {
       "nome": "val_cotamaxima",
       "tipos": [
-        "large_string"
+        "double"
       ]
     },
     {
       "nome": "val_cotaminima",
       "tipos": [
-        "large_string"
+        "double"
       ]
     },
     {
       "nome": "val_volmax",
       "tipos": [
-        "large_string"
+        "double"
       ]
     },
     {
       "nome": "val_volmin",
       "tipos": [
-        "large_string"
+        "double"
       ]
     },
     {
       "nome": "val_volutiltot",
       "tipos": [
-        "large_string"
+        "double"
       ]
     },
     {

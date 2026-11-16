@@ -16,8 +16,7 @@ dataset:
   unidades_de_medida:
     val_geracao: "MWmed"
   dados_pessoais: nenhum
-  eras:
-    - {desde: 2026, mudanca: "`val_geracao`: texto até 2025, decimal desde 2026"}
+  eras: []
   revisado_em: 2026-11-15
   versao_fetcher: 0.3.0
 ---
@@ -49,7 +48,7 @@ Geração verificada de usinas, conjuntos de usinas e grupos de pequenas usinas 
 | Colunas | 13 |
 | Unidades de medida | `val_geracao`: MWmed |
 | Dados pessoais | nenhum |
-| Eras | 2026: `val_geracao`: texto até 2025, decimal desde 2026 |
+| Eras | nenhuma |
 | Revisado em | 2026-11-15 |
 | Versão do fetcher | 0.3.0 |
 
@@ -65,8 +64,6 @@ Geração verificada de usinas, conjuntos de usinas e grupos de pequenas usinas 
 
 - Unidade de análise: a geração de uma usina, conjunto ou grupo de usinas em uma hora.
 - 6 arquivos convertidos (amostra), de 2000 a 2026-10: 993.556 linhas no primeiro e 537.384 no último; 9.422.737 linhas no total. O arquivo do ano corrente cresce a cada atualização.
-- Mudanças de tipo entre arquivos (conferidas nos Parquet convertidos):
-    - 2026: `val_geracao`: texto até 2025, decimal desde 2026.
 
 ## Variáveis
 
@@ -85,7 +82,7 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `nom_usina` | `nom_usina` | texto | Nome da Usina | — | todo |
 | `id_ons` | `id_ons` | texto | Identificador ONS | — | todo |
 | `ceg` | `ceg` | texto | Código Único do Empreendimento de Geração (CEG), estabelecido pela ANEEL | — | todo |
-| `val_geracao` | `val_geracao` | decimal (texto em parte dos arquivos) | Geração de Energia na unidade de medida MWmed | MWmed | todo |
+| `val_geracao` | `val_geracao` | decimal | Geração de Energia na unidade de medida MWmed | MWmed | todo |
 | `periodicidade` | — (gerada) | texto | Periodicidade do arquivo de origem: `anual` ou `mensal` | `anual`, `mensal` | todo |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 | `mes` | — (partição) | inteiro | Mês do arquivo de origem; 0 nos arquivos anuais | — | todo |
@@ -93,7 +90,7 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 ## No lake
 
 - Dataset `ons/geracao-usina-2`, particionado por `ano`, `mes`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`GERACAO_USINA-2_AAAA`; `_AAAA_MM` nos mensais, com `mes = 0` nos anuais); se o arquivo não tiver a coluna, o conversor a acrescenta.
 - A coluna `periodicidade` (`anual` ou `mensal`) é acrescentada pelo conversor.
 
@@ -103,7 +100,6 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 - **Granularidade mista:** de 2000 a 2021 o ONS publica um arquivo por ano; desde 2022, um por mês. O lake guarda as duas em `ano` e `mes`, com `mes = 0` para os arquivos anuais, e a coluna `periodicidade` (`anual` ou `mensal`).
 - Os conjuntos de usinas (Tipo II-C) vêm de ajustamentos operativos; os grupos de pequenas usinas (Tipo III) não têm relacionamento com o ONS e os valores são previsões de geração. Essas linhas não têm `id_ons`: em 2026-10 são 87.048 linhas de 537.384 sem `id_ons`; use `nom_usina` junto na chave.
 - Volume: um mês de 2026 tem mais de 500 mil linhas; filtre por `ano` e `mes` antes de agregar.
-- **Colunas numéricas com tipo misto entre arquivos.** 1 coluna(s) (`val_geracao`) chegam como texto em alguns anos e como decimal em outros (o texto traz oito casas decimais e o zero como `0E-8`); veja as mudanças acima. Ao ler vários anos juntos, converta com `CAST(... AS DOUBLE)`.
 
 ## Exemplos
 
@@ -113,7 +109,7 @@ Geração média por tipo de usina em 2026-10, em MWmed.
 import duckdb
 
 duckdb.sql("""
-    SELECT nom_tipousina, round(sum(CAST(val_geracao AS DOUBLE)) / count(DISTINCT din_instante), 0) AS geracao_media_mwmed
+    SELECT nom_tipousina, round(sum(val_geracao) / count(DISTINCT din_instante), 0) AS geracao_media_mwmed
     FROM read_parquet('lake/ons/geracao-usina-2/**/*.parquet', hive_partitioning = true, union_by_name = true)
     WHERE ano = 2026 AND mes = 10
     GROUP BY 1

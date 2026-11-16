@@ -34,8 +34,7 @@
     {
       "nome": "val_cmo",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2020",
       "periodo_fim": "2026"

@@ -16,8 +16,7 @@ dataset:
   unidades_de_medida:
     val_cargaenergiahomwmed: "MWmed"
   dados_pessoais: nenhum
-  eras:
-    - {desde: 2025, mudanca: "`val_cargaenergiahomwmed`: texto até 2024, decimal desde 2025"}
+  eras: []
   revisado_em: 2026-11-15
   versao_fetcher: 0.3.0
 ---
@@ -49,7 +48,7 @@ Curva de carga horária: o perfil de consumo de energia elétrica por subsistema
 | Colunas | 4 |
 | Unidades de medida | `val_cargaenergiahomwmed`: MWmed |
 | Dados pessoais | nenhum |
-| Eras | 2025: `val_cargaenergiahomwmed`: texto até 2024, decimal desde 2025 |
+| Eras | nenhuma |
 | Revisado em | 2026-11-15 |
 | Versão do fetcher | 0.3.0 |
 
@@ -64,8 +63,6 @@ Curva de carga horária: o perfil de consumo de energia elétrica por subsistema
 
 - Unidade de análise: a carga de um subsistema em uma hora.
 - 27 arquivos convertidos (todos os publicados), de 2000 a 2026: 35.132 linhas no primeiro e 30.432 no último; 942.040 linhas no total. O arquivo do ano corrente cresce a cada atualização.
-- Mudanças de tipo entre arquivos (conferidas nos Parquet convertidos):
-    - 2025: `val_cargaenergiahomwmed`: texto até 2024, decimal desde 2025.
 
 ## Variáveis
 
@@ -76,20 +73,19 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `id_subsistema` | `id_subsistema` | texto | Código do Subsistema | — | todo |
 | `nom_subsistema` | `nom_subsistema` | texto | Nome do Subsistema | — | todo |
 | `din_instante` | `din_instante` | data e hora | Data de referência | — | todo |
-| `val_cargaenergiahomwmed` | `val_cargaenergiahomwmed` | decimal (texto em parte dos arquivos) | Valor da Carga de Energia, em MWmed | MWmed | todo |
+| `val_cargaenergiahomwmed` | `val_cargaenergiahomwmed` | decimal | Valor da Carga de Energia, em MWmed | MWmed | todo |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 
 ## No lake
 
 - Dataset `ons/curva-carga`, particionado por `ano`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`CURVA_CARGA_AAAA`); se o arquivo não tiver a coluna, o conversor a acrescenta.
 
 ## Cuidados de uso
 
 - **Cada arquivo é a série do período, com o ano corrente em atualização.** O ONS reenvia o arquivo do ano (ou do mês) corrente e avisa que os dados passam por consistência; valores já publicados podem mudar. Reconverta depois de cada atualização antes de fechar um período.
 - O ONS avisa que os dados passam por consistência recorrente e podem ser atualizados depois de publicados; o fetcher baixa de novo o arquivo do ano corrente e o lake o reconverte quando o conteúdo muda.
-- **Colunas numéricas com tipo misto entre arquivos.** 1 coluna(s) (`val_cargaenergiahomwmed`) chegam como texto em alguns anos e como decimal em outros (o texto traz oito casas decimais e o zero como `0E-8`); veja as mudanças acima. Ao ler vários anos juntos, converta com `CAST(... AS DOUBLE)`.
 
 ## Exemplos
 
@@ -101,7 +97,7 @@ import duckdb
 duckdb.sql("""
     SELECT hour(din_instante) AS hora, round(avg(soma), 0) AS carga_mwmed
     FROM (
-      SELECT din_instante, sum(CAST(val_cargaenergiahomwmed AS DOUBLE)) AS soma
+      SELECT din_instante, sum(val_cargaenergiahomwmed) AS soma
       FROM read_parquet('lake/ons/curva-carga/**/*.parquet', hive_partitioning = true, union_by_name = true)
       WHERE ano = 2026
       GROUP BY 1

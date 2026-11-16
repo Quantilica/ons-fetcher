@@ -14,10 +14,10 @@ dataset:
   formato_bruto: "arquivos Parquet (ou CSV com ponto e vírgula, quando não há Parquet) no bucket público S3 do ONS, um por ano"
   lake: {estado: convertido, particoes: [ano], chave: [ano, nom_reservatorioee, ena_data], colunas: 6}
   unidades_de_medida:
-    ena_bruta_ree_mwmed: "MWmed (texto)"
-    ena_bruta_ree_percentualmlt: "% da MLT (texto)"
-    ena_armazenavel_ree_mwmed: "MWmed (texto)"
-    ena_armazenavel_ree_percentualmlt: "% da MLT (texto)"
+    ena_bruta_ree_mwmed: "MWmed"
+    ena_bruta_ree_percentualmlt: "% da MLT"
+    ena_armazenavel_ree_mwmed: "MWmed"
+    ena_armazenavel_ree_percentualmlt: "% da MLT"
   dados_pessoais: nenhum
   eras: []
   revisado_em: 2026-11-15
@@ -49,7 +49,7 @@ Energia natural afluente (ENA) diária por reservatório equivalente de energia 
 | Partições | `ano` |
 | Chave | `ano`, `nom_reservatorioee`, `ena_data` |
 | Colunas | 6 |
-| Unidades de medida | `ena_bruta_ree_mwmed`: MWmed (texto); `ena_bruta_ree_percentualmlt`: % da MLT (texto); `ena_armazenavel_ree_mwmed`: MWmed (texto); `ena_armazenavel_ree_percentualmlt`: % da MLT (texto) |
+| Unidades de medida | `ena_bruta_ree_mwmed`: MWmed; `ena_bruta_ree_percentualmlt`: % da MLT; `ena_armazenavel_ree_mwmed`: MWmed; `ena_armazenavel_ree_percentualmlt`: % da MLT |
 | Dados pessoais | nenhum |
 | Eras | nenhuma |
 | Revisado em | 2026-11-15 |
@@ -75,22 +75,22 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 |---|---|---|---|---|---|
 | `nom_reservatorioee` | `nom_ree` | texto | Nome do Reservatório Equivalente | — | todo |
 | `ena_data` | `ena_data` | texto | Dia observado da medida | — | todo |
-| `ena_bruta_ree_mwmed` | `ena_bruta_ree_mwmed` | texto | Valor de ENA bruta na unidade de medida MWmês | MWmed (texto) | todo |
-| `ena_bruta_ree_percentualmlt` | `ena_bruta_ree_percentualmlt` | texto | Valor de ENA bruta percentual da média de longo termo-MLT (%) | % da MLT (texto) | todo |
-| `ena_armazenavel_ree_mwmed` | `ena_armazenavel_ree_mwmed` | texto | Valor de ENA armazenável na unidade de medida MWmês | MWmed (texto) | todo |
-| `ena_armazenavel_ree_percentualmlt` | `ena_armazenavel_ree_percentualmlt` | texto | Valor de ENA armazenável percentual da média de longo termo-MLT (%) | % da MLT (texto) | todo |
+| `ena_bruta_ree_mwmed` | `ena_bruta_ree_mwmed` | decimal | Valor de ENA bruta na unidade de medida MWmês | MWmed | todo |
+| `ena_bruta_ree_percentualmlt` | `ena_bruta_ree_percentualmlt` | decimal | Valor de ENA bruta percentual da média de longo termo-MLT (%) | % da MLT | todo |
+| `ena_armazenavel_ree_mwmed` | `ena_armazenavel_ree_mwmed` | decimal | Valor de ENA armazenável na unidade de medida MWmês | MWmed | todo |
+| `ena_armazenavel_ree_percentualmlt` | `ena_armazenavel_ree_percentualmlt` | decimal | Valor de ENA armazenável percentual da média de longo termo-MLT (%) | % da MLT | todo |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 
 ## No lake
 
 - Dataset `ons/ena-diario-por-ree`, particionado por `ano`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`ENA_DIARIO_REE_AAAA`); se o arquivo não tiver a coluna, o conversor a acrescenta.
 
 ## Cuidados de uso
 
 - **Cada arquivo é a série do período, com o ano corrente em atualização.** O ONS reenvia o arquivo do ano (ou do mês) corrente e avisa que os dados passam por consistência; valores já publicados podem mudar. Reconverta depois de cada atualização antes de fechar um período.
-- **Os valores numéricos chegam como texto em todos os anos** (texto com oito casas decimais; zero aparece como `0E-8`). Converta com `CAST(... AS DOUBLE)`.
+- **Os valores numéricos são texto na origem em todos os anos** (texto com oito casas decimais; zero aparece como `0E-8`). O conversor os grava como `double`; o zero vem como `0.0`.
 - A coluna do REE chama-se `nom_reservatorioee` no lake (o dicionário oficial escreve `nom_ree`).
 - `ena_data` é texto (`AAAA-MM-DD`).
 
@@ -102,7 +102,7 @@ ENA bruta (percentual da MLT) por REE no último dia publicado.
 import duckdb
 
 duckdb.sql("""
-    SELECT nom_reservatorioee, ena_data, CAST(ena_bruta_ree_percentualmlt AS DOUBLE) AS ena_pct_mlt
+    SELECT nom_reservatorioee, ena_data, ena_bruta_ree_percentualmlt AS ena_pct_mlt
     FROM read_parquet('lake/ons/ena-diario-por-ree/**/*.parquet', hive_partitioning = true, union_by_name = true)
     WHERE ano = 2026 AND ena_data = (SELECT max(ena_data) FROM read_parquet('lake/ons/ena-diario-por-ree/**/*.parquet', hive_partitioning = true, union_by_name = true) WHERE ano = 2026)
     ORDER BY 3 DESC

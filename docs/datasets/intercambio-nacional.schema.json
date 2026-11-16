@@ -51,8 +51,7 @@
     {
       "nome": "val_intercambiomwmed",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
@@ -60,7 +59,7 @@
     {
       "nome": "val_intercambioprogmwmed",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2026",
       "periodo_fim": "2026"

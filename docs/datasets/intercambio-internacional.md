@@ -15,12 +15,10 @@ dataset:
   lake: {estado: convertido, particoes: [ano], chave: [ano, nom_paisdestino, din_instante], colunas: 4}
   unidades_de_medida:
     val_intercambiomwmed: "MWmed"
-    val_intercambioprogmwmed: "MWmed (texto)"
+    val_intercambioprogmwmed: "MWmed"
   dados_pessoais: nenhum
   eras:
     - {desde: 2023, mudanca: "`din_instante`: texto até 2022, data e hora desde 2023"}
-    - {desde: 2023, mudanca: "`val_intercambiomwmed`: texto até 2022, decimal desde 2023"}
-    - {desde: 2026, mudanca: "`val_intercambiomwmed`: decimal até 2025, texto desde 2026"}
   revisado_em: 2026-11-15
   versao_fetcher: 0.3.0
 ---
@@ -50,9 +48,9 @@ Intercâmbio do SIN com outros países em base horária, em MWmed: a soma do flu
 | Partições | `ano` |
 | Chave | `ano`, `nom_paisdestino`, `din_instante` |
 | Colunas | 4 |
-| Unidades de medida | `val_intercambiomwmed`: MWmed; `val_intercambioprogmwmed`: MWmed (texto) |
+| Unidades de medida | `val_intercambiomwmed`: MWmed; `val_intercambioprogmwmed`: MWmed |
 | Dados pessoais | nenhum |
-| Eras | 2023: `din_instante`: texto até 2022, data e hora desde 2023; 2023: `val_intercambiomwmed`: texto até 2022, decimal desde 2023; 2026: `val_intercambiomwmed`: decimal até 2025, texto desde 2026 |
+| Eras | 2023: `din_instante`: texto até 2022, data e hora desde 2023 |
 | Revisado em | 2026-11-15 |
 | Versão do fetcher | 0.3.0 |
 
@@ -70,8 +68,6 @@ Intercâmbio do SIN com outros países em base horária, em MWmed: a soma do flu
 - 27 arquivos convertidos (todos os publicados), de 2000 a 2026: 17.566 linhas no primeiro e 15.168 no último; 659.057 linhas no total. O arquivo do ano corrente cresce a cada atualização.
 - Mudanças de tipo entre arquivos (conferidas nos Parquet convertidos):
     - 2023: `din_instante`: texto até 2022, data e hora desde 2023.
-    - 2023: `val_intercambiomwmed`: texto até 2022, decimal desde 2023.
-    - 2026: `val_intercambiomwmed`: decimal até 2025, texto desde 2026.
 
 ## Variáveis
 
@@ -81,23 +77,22 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 |---|---|---|---|---|---|
 | `din_instante` | `din_instante` | data e hora / texto | Data/hora (início do período de agregação) | — | todo |
 | `nom_paisdestino` | `nom_paisdestino` | texto | Nome do país de destino da energia | — | todo |
-| `val_intercambiomwmed` | `val_intercambiomwmed` | decimal (texto em parte dos arquivos) | Intercâmbio verificado em base horária, representando a soma das medidas de fluxo de potência ativa nas conversoras de frequência de fronteira entre os dois países medido, em MWmed. Dados positivos indicam exportação de energia do Brasil para outros países | MWmed | todo |
-| `val_intercambioprogmwmed` | `val_intercambioprogmwmed` | texto | Intercâmbio programado em base horária em MWmed | MWmed (texto) | 2026 a 2026 |
+| `val_intercambiomwmed` | `val_intercambiomwmed` | decimal | Intercâmbio verificado em base horária, representando a soma das medidas de fluxo de potência ativa nas conversoras de frequência de fronteira entre os dois países medido, em MWmed. Dados positivos indicam exportação de energia do Brasil para outros países | MWmed | todo |
+| `val_intercambioprogmwmed` | `val_intercambioprogmwmed` | decimal | Intercâmbio programado em base horária em MWmed | MWmed | 2026 a 2026 |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 
 ## No lake
 
 - Dataset `ons/intercambio-internacional`, particionado por `ano`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`INTERCAMBIO_INTERNACIONAL_AAAA`); se o arquivo não tiver a coluna, o conversor a acrescenta.
 
 ## Cuidados de uso
 
 - **Cada arquivo é a série do período, com o ano corrente em atualização.** O ONS reenvia o arquivo do ano (ou do mês) corrente e avisa que os dados passam por consistência; valores já publicados podem mudar. Reconverta depois de cada atualização antes de fechar um período.
-- **Formatos mistos.** De 2000 a 2022 o ONS só publica CSV, com ponto decimal; o conversor lê CSV com vírgula decimal, então as colunas numéricas e de data ficam como texto nesses anos. Desde 2023 há Parquet com tipos corretos.
+- **Formatos mistos.** De 2000 a 2022 o ONS só publica CSV, com ponto decimal; nesses anos `din_instante` fica como texto (o conversor não converte datas). Desde 2023 há Parquet, com data e hora. Os valores numéricos são `double` em todos os anos.
 - O nome do país vem preenchido com espaços à direita (30 caracteres): use `trim`.
 - **Espaços nas pontas do texto.** Há valores preenchidos com espaços em: `nom_paisdestino` (15.168 linhas). Aplique `trim` antes de juntar ou agrupar.
-- **Colunas numéricas com tipo misto entre arquivos.** 1 coluna(s) (`val_intercambiomwmed`) chegam como texto em alguns anos e como decimal em outros (o texto traz oito casas decimais e o zero como `0E-8`); veja as mudanças acima. Ao ler vários anos juntos, converta com `CAST(... AS DOUBLE)`.
 
 ## Exemplos
 
@@ -107,7 +102,7 @@ Intercâmbio médio com cada país em 2026, em MWmed.
 import duckdb
 
 duckdb.sql("""
-    SELECT trim(nom_paisdestino) AS pais, round(avg(CAST(val_intercambiomwmed AS DOUBLE)), 0) AS mwmed
+    SELECT trim(nom_paisdestino) AS pais, round(avg(val_intercambiomwmed), 0) AS mwmed
     FROM read_parquet('lake/ons/intercambio-internacional/**/*.parquet', hive_partitioning = true, union_by_name = true)
     WHERE ano = 2026
     GROUP BY 1

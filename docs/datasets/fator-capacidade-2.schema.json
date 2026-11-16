@@ -146,7 +146,7 @@
     {
       "nome": "val_geracaoprogramada",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2022-01",
       "periodo_fim": "2026-10"
@@ -154,7 +154,7 @@
     {
       "nome": "val_geracaoverificada",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2022-01",
       "periodo_fim": "2026-10"
@@ -162,7 +162,7 @@
     {
       "nome": "val_capacidadeinstalada",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2022-01",
       "periodo_fim": "2026-10"
@@ -170,8 +170,7 @@
     {
       "nome": "val_fatorcapacidade",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2022-01",
       "periodo_fim": "2026-10"

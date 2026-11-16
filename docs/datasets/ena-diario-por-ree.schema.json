@@ -25,7 +25,7 @@
     {
       "nome": "ena_bruta_ree_mwmed",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"
@@ -33,7 +33,7 @@
     {
       "nome": "ena_bruta_ree_percentualmlt",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"
@@ -41,7 +41,7 @@
     {
       "nome": "ena_armazenavel_ree_mwmed",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"
@@ -49,7 +49,7 @@
     {
       "nome": "ena_armazenavel_ree_percentualmlt",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"

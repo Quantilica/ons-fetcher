@@ -34,8 +34,7 @@
     {
       "nome": "val_cargaenergiahomwmed",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"

@@ -64,7 +64,7 @@ O fetcher declara **23 datasets**, os conjuntos que baixa hoje (o catálogo do f
 - Os arquivos do ano corrente são reenviados a cada atualização; os cadastros (capacidade, reservatórios, usinas e conjuntos) são retratos do dia, sem histórico.
 - O fetcher lista o bucket, escolhe o melhor formato de cada período (Parquet, depois CSV, ZIP, XLSX) e baixa só os arquivos novos ou alterados.
 - A licença do portal é Creative Commons Atribuição (CC BY).
-- O conversor mantém o tipo de cada arquivo de origem: os conjuntos mais antigos têm valores numéricos gravados como texto (oito casas decimais, zero como `0E-8`) em parte dos anos. Cada página lista as colunas e os anos afetados.
+- Os conjuntos mais antigos trazem valores numéricos gravados como texto na origem (oito casas decimais, zero como `0E-8`) em parte dos anos, e os CSV usam ponto decimal. O conversor grava as colunas numéricas como `double` em todos os anos (texto vazio vira nulo); códigos, nomes e datas mantêm o tipo do arquivo de origem. Cada página lista as colunas numéricas.
 
 ## Como os conjuntos se relacionam
 

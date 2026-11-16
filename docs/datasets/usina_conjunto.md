@@ -88,7 +88,7 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 ## No lake
 
 - Dataset `ons/usina_conjunto`, sem partição (arquivo único); um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
 
 ## Cuidados de uso
 

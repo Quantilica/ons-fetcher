@@ -116,7 +116,7 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 ## No lake
 
 - Dataset `ons/dados-hidrologicos-res`, particionado por `ano`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`DADOS_HIDROLOGICOS_RES_AAAA`); se o arquivo não tiver a coluna, o conversor a acrescenta.
 
 ## Cuidados de uso

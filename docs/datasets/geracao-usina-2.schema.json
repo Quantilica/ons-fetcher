@@ -98,8 +98,7 @@
     {
       "nome": "val_geracao",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2022-01",
       "periodo_fim": "2026-10"

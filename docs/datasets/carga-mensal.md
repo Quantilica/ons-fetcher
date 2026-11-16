@@ -73,18 +73,18 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `id_subsistema` | `id_subsistema` | texto | Código do Subsistema | — | todo |
 | `nom_subsistema` | `nom_subsistema` | texto | Nome do Subsistema | — | todo |
 | `din_instante` | `din_instante` | data e hora | Data de referência | — | todo |
-| `val_cargaenergiamwmed` | `val_cargaenergiamwmed` | texto | Valor da Carga de Energia, em MWmed | MWmed | todo |
+| `val_cargaenergiamwmed` | `val_cargaenergiamwmed` | decimal | Valor da Carga de Energia, em MWmed | MWmed | todo |
 
 ## No lake
 
 - Dataset `ons/carga-mensal`, sem partição (arquivo único); um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 
 ## Cuidados de uso
 
 - **A definição de carga mudou.** Até 2014-12, é a carga atendida por usinas despachadas ou programadas pelo ONS; de 2015-01 a 2021-02, soma as não despachadas; desde 2023-04-29, soma a micro e minigeração distribuída (MMGD) estimada (descrição oficial do conjunto).
 - O código do subsistema vem com espaço à direita em parte das linhas (`'N '`, `'S '`); aplique `trim` antes de juntar com outras tabelas.
-- **Os dois últimos meses vêm zerados.** Em 2026-11-15, as linhas de 2026-10-31 e de 2026-11-30 trazem `0E-8` (zero) para os quatro subsistemas: o mês ainda não foi apurado. Descarte meses com carga zero antes de analisar.
+- **Os dois últimos meses vêm zerados.** Em 2026-11-15, as linhas de 2026-10-31 e de 2026-11-30 trazem carga zero (o ONS grava `0E-8`) para os quatro subsistemas: o mês ainda não foi apurado. Descarte meses com carga zero antes de analisar.
 - O arquivo traz um único Parquet sem histórico por ano: o ONS republica a série inteira a cada atualização, e o lake guarda só a última versão.
 - **Espaços nas pontas do texto.** Há valores preenchidos com espaços em: `id_subsistema` (646 linhas). Aplique `trim` antes de juntar ou agrupar.
 
@@ -96,10 +96,10 @@ Carga mensal do SIN (soma dos subsistemas) dos últimos 12 meses publicados, em 
 import duckdb
 
 duckdb.sql("""
-    SELECT din_instante, round(sum(CAST(val_cargaenergiamwmed AS DOUBLE)), 0) AS carga_mwmed
+    SELECT din_instante, round(sum(val_cargaenergiamwmed), 0) AS carga_mwmed
     FROM read_parquet('lake/ons/carga-mensal/**/*.parquet', hive_partitioning = true, union_by_name = true)
     GROUP BY 1
-    HAVING sum(CAST(val_cargaenergiamwmed AS DOUBLE)) > 0
+    HAVING sum(val_cargaenergiamwmed) > 0
     ORDER BY 1 DESC
     LIMIT 12
 """).show()

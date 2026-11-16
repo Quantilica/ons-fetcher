@@ -14,6 +14,11 @@ dataset:
   formato_bruto: "um arquivo Parquet (ou CSV) único no bucket público S3 do ONS, substituído a cada atualização"
   lake: {estado: convertido, particoes: [], chave: [nom_reservatorio, nom_usina, cod_posto], colunas: 24}
   unidades_de_medida:
+    val_cotamaxima: "m"
+    val_cotaminima: "m"
+    val_volmax: "hm3"
+    val_volmin: "hm3"
+    val_volutiltot: "hm3"
     val_produtibilidadeespecifica: "MW por altura de queda (unidade não detalhada pela fonte)"
     val_produtividade65volutil: "% (descrição oficial)"
     val_perda: "% ou m, conforme val_tipoperda"
@@ -52,7 +57,7 @@ Cadastro dos reservatórios do sistema: tipo, usina, bacia, rio, REE, cotas e vo
 | Partições | — |
 | Chave | `nom_reservatorio`, `nom_usina`, `cod_posto` |
 | Colunas | 24 |
-| Unidades de medida | `val_produtibilidadeespecifica`: MW por altura de queda (unidade não detalhada pela fonte); `val_produtividade65volutil`: % (descrição oficial); `val_perda`: % ou m, conforme val_tipoperda; `val_latitude`: graus; `val_longitude`: graus; `cod_resplanejamento`: código (sem unidade); `cod_posto`: código (sem unidade) |
+| Unidades de medida | `val_cotamaxima`: m; `val_cotaminima`: m; `val_volmax`: hm3; `val_volmin`: hm3; `val_volutiltot`: hm3; `val_produtibilidadeespecifica`: MW por altura de queda (unidade não detalhada pela fonte); `val_produtividade65volutil`: % (descrição oficial); `val_perda`: % ou m, conforme val_tipoperda; `val_latitude`: graus; `val_longitude`: graus; `cod_resplanejamento`: código (sem unidade); `cod_posto`: código (sem unidade) |
 | Dados pessoais | nenhum |
 | Eras | nenhuma |
 | Revisado em | 2026-11-15 |
@@ -88,11 +93,11 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `nom_rio` | `nom_rio` | texto | Nome do Rio | — | todo |
 | `nom_ree` | `nom_ree` | texto | Nome do Reservatório Equivalente | — | todo |
 | `dat_entrada` | `dat_entrada` | texto | Data de Entrada em Operação | — | todo |
-| `val_cotamaxima` | `val_cotamaxima` | texto | Cota Máxima Para Operação. Altura máxima do nível d'água de um reservatório, considerado para fins de operação normal medido em metros(m) | — | todo |
-| `val_cotaminima` | `val_cotaminima` | texto | Cota Mínima Para Operação. Altura mínima do nível d'água de um reservatório considerado para fins de operação normal medido em metros(m). | — | todo |
-| `val_volmax` | `val_volmax` | texto | Volume Máximo. Volume do reservatório correspondente ao nível máximo operativo medido em hectômetro cúbico (hm3) | — | todo |
-| `val_volmin` | `val_volmin` | texto | Volume Mínimo. Volume do reservatório correspondente ao nível mínimo operativo medido em hectômetro cúbico (hm3) | — | todo |
-| `val_volutiltot` | `val_volutiltot` | texto | Volume Útil Total. Volume do reservatório compreendido entre o nível máximo de operação e mínimo normal de operação medido em hectômetro cúbico (hm3) | — | todo |
+| `val_cotamaxima` | `val_cotamaxima` | decimal | Cota Máxima Para Operação. Altura máxima do nível d'água de um reservatório, considerado para fins de operação normal medido em metros(m) | m | todo |
+| `val_cotaminima` | `val_cotaminima` | decimal | Cota Mínima Para Operação. Altura mínima do nível d'água de um reservatório considerado para fins de operação normal medido em metros(m). | m | todo |
+| `val_volmax` | `val_volmax` | decimal | Volume Máximo. Volume do reservatório correspondente ao nível máximo operativo medido em hectômetro cúbico (hm3) | hm3 | todo |
+| `val_volmin` | `val_volmin` | decimal | Volume Mínimo. Volume do reservatório correspondente ao nível mínimo operativo medido em hectômetro cúbico (hm3) | hm3 | todo |
+| `val_volutiltot` | `val_volutiltot` | decimal | Volume Útil Total. Volume do reservatório compreendido entre o nível máximo de operação e mínimo normal de operação medido em hectômetro cúbico (hm3) | hm3 | todo |
 | `val_produtibilidadeespecifica` | `val_produtibilidadeespecifica` | decimal | Produtividade Específica, que indica quantos MW serão ganhos pela altura da queda | MW por altura de queda (unidade não detalhada pela fonte) | todo |
 | `val_produtividade65volutil` | `val_produtividade65volutil` | decimal | Produtividade a 65% do volume útil medido em % | % (descrição oficial) | todo |
 | `val_tipoperda` | `val_tipoperda` | texto | Tipo da Perda de Carga. Indica se o tipo de perda de carga está em porcentagem (%) ou Metros(m). | — | todo |
@@ -106,12 +111,12 @@ Colunas do dicionário oficial que o arquivo não traz: `id_reservatorio`.
 ## No lake
 
 - Dataset `ons/reservatorio`, sem partição (arquivo único); um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 
 ## Cuidados de uso
 
 - **Sem histórico.** O ONS lê os dados das origens e atualiza o arquivo todo dia; o lake guarda só o retrato mais recente.
-- As colunas de cotas e volumes (`val_cotamaxima`, `val_cotaminima`, `val_volmax`, `val_volmin`, `val_volutiltot`) chegam como texto com três casas decimais; converta com `CAST`. A unidade dos volumes é hm3 e a das cotas, metros (descrição oficial).
+- As colunas de cotas e volumes (`val_cotamaxima`, `val_cotaminima`, `val_volmax`, `val_volmin`, `val_volutiltot`) são texto com três casas decimais na origem; o conversor os grava como `double`. A unidade dos volumes é hm3 e a das cotas, metros (descrição oficial).
 - `val_tipoperda` indica se `val_perda` está em porcentagem ou em metros (`m` ou `%`; nulo em parte dos reservatórios).
 - `cod_resplanejamento` se repete em 3 códigos (`ITAIPU`, `P. AFONSO 1,2,3` e `HENRY BORDEN` têm mais de uma linha); use o nome do reservatório, a usina e o posto de vazão.
 - **Espaços nas pontas do texto.** Há valores preenchidos com espaços em: `res_id` (19 linhas). Aplique `trim` antes de juntar ou agrupar.
@@ -124,7 +129,7 @@ Reservatórios com maior volume útil total, em hm3.
 import duckdb
 
 duckdb.sql("""
-    SELECT nom_reservatorio, nom_usina, CAST(val_volutiltot AS DOUBLE) AS volume_util_hm3
+    SELECT nom_reservatorio, nom_usina, val_volutiltot AS volume_util_hm3
     FROM read_parquet('lake/ons/reservatorio/**/*.parquet', hive_partitioning = true, union_by_name = true)
     ORDER BY 3 DESC NULLS LAST
     LIMIT 10

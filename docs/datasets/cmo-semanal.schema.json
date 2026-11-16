@@ -34,8 +34,7 @@
     {
       "nome": "val_cmomediasemanal",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2005",
       "periodo_fim": "2026"
@@ -43,8 +42,7 @@
     {
       "nome": "val_cmoleve",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2005",
       "periodo_fim": "2026"
@@ -52,8 +50,7 @@
     {
       "nome": "val_cmomedia",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2005",
       "periodo_fim": "2026"
@@ -61,8 +58,7 @@
     {
       "nome": "val_cmopesada",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2005",
       "periodo_fim": "2026"

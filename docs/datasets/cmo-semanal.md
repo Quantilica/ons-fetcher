@@ -19,9 +19,7 @@ dataset:
     val_cmomedia: "R$/MWh"
     val_cmopesada: "R$/MWh"
   dados_pessoais: nenhum
-  eras:
-    - {desde: 2023, mudanca: "`val_cmomediasemanal`, `val_cmoleve`, `val_cmomedia`, `val_cmopesada`: texto até 2022, decimal desde 2023"}
-    - {desde: 2026, mudanca: "`val_cmomediasemanal`, `val_cmoleve`, `val_cmomedia`, `val_cmopesada`: decimal até 2025, texto desde 2026"}
+  eras: []
   revisado_em: 2026-11-15
   versao_fetcher: 0.3.0
 ---
@@ -53,7 +51,7 @@ Custo Marginal de Operação (CMO) semanal por subsistema e patamar de carga, es
 | Colunas | 7 |
 | Unidades de medida | `val_cmomediasemanal`: R$/MWh; `val_cmoleve`: R$/MWh; `val_cmomedia`: R$/MWh; `val_cmopesada`: R$/MWh |
 | Dados pessoais | nenhum |
-| Eras | 2023: `val_cmomediasemanal`, `val_cmoleve`, `val_cmomedia`, `val_cmopesada`: texto até 2022, decimal desde 2023; 2026: `val_cmomediasemanal`, `val_cmoleve`, `val_cmomedia`, `val_cmopesada`: decimal até 2025, texto desde 2026 |
+| Eras | nenhuma |
 | Revisado em | 2026-11-15 |
 | Versão do fetcher | 0.3.0 |
 
@@ -68,9 +66,6 @@ Custo Marginal de Operação (CMO) semanal por subsistema e patamar de carga, es
 
 - Unidade de análise: o CMO de um subsistema em uma semana operativa.
 - 22 arquivos convertidos (todos os publicados), de 2005 a 2026: 208 linhas no primeiro e 188 no último; 4.568 linhas no total. O arquivo do ano corrente cresce a cada atualização.
-- Mudanças de tipo entre arquivos (conferidas nos Parquet convertidos):
-    - 2023: `val_cmomediasemanal`, `val_cmoleve`, `val_cmomedia`, `val_cmopesada`: texto até 2022, decimal desde 2023.
-    - 2026: `val_cmomediasemanal`, `val_cmoleve`, `val_cmomedia`, `val_cmopesada`: decimal até 2025, texto desde 2026.
 
 ## Variáveis
 
@@ -81,16 +76,16 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `id_subsistema` | `id_subsistema` | texto | Código do Subsistema | — | todo |
 | `nom_subsistema` | `nom_subsistema` | texto | Nome do Subsistema | — | todo |
 | `din_instante` | `din_instante` | data e hora | Data de referência da Semana Operativa | — | todo |
-| `val_cmomediasemanal` | `val_cmomediasemanal` | decimal (texto em parte dos arquivos) | CMO Médio Semanal, em R$/MW | R$/MWh | todo |
-| `val_cmoleve` | `val_cmoleve` | decimal (texto em parte dos arquivos) | CMO no patamar de carga leve, em R$/MWh | R$/MWh | todo |
-| `val_cmomedia` | `val_cmomedia` | decimal (texto em parte dos arquivos) | CMO no patamar de carga média, em R$/MWh | R$/MWh | todo |
-| `val_cmopesada` | `val_cmopesada` | decimal (texto em parte dos arquivos) | CMO no patamar de carga pesada, em R$/MWh | R$/MWh | todo |
+| `val_cmomediasemanal` | `val_cmomediasemanal` | decimal | CMO Médio Semanal, em R$/MW | R$/MWh | todo |
+| `val_cmoleve` | `val_cmoleve` | decimal | CMO no patamar de carga leve, em R$/MWh | R$/MWh | todo |
+| `val_cmomedia` | `val_cmomedia` | decimal | CMO no patamar de carga média, em R$/MWh | R$/MWh | todo |
+| `val_cmopesada` | `val_cmopesada` | decimal | CMO no patamar de carga pesada, em R$/MWh | R$/MWh | todo |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 
 ## No lake
 
 - Dataset `ons/cmo-semanal`, particionado por `ano`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`CMO_SEMANAL_AAAA`); se o arquivo não tiver a coluna, o conversor a acrescenta.
 
 ## Cuidados de uso
@@ -98,7 +93,6 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 - **Cada arquivo é a série do período, com o ano corrente em atualização.** O ONS reenvia o arquivo do ano (ou do mês) corrente e avisa que os dados passam por consistência; valores já publicados podem mudar. Reconverta depois de cada atualização antes de fechar um período.
 - A descrição oficial de `val_cmomediasemanal` diz 'R$/MW'; as demais colunas dizem 'R$/MWh'. O valor é um preço por unidade de energia: trate todas como R$/MWh.
 - O ONS avisa que os dados passam por consistência recorrente e podem ser atualizados depois de publicados.
-- **Colunas numéricas com tipo misto entre arquivos.** 4 coluna(s) (`val_cmomediasemanal`, ...) chegam como texto em alguns anos e como decimal em outros (o texto traz oito casas decimais e o zero como `0E-8`); veja as mudanças acima. Ao ler vários anos juntos, converta com `CAST(... AS DOUBLE)`.
 
 ## Exemplos
 
@@ -109,7 +103,7 @@ import duckdb
 
 duckdb.sql("""
     SELECT id_subsistema, date_trunc('month', din_instante) AS mes,
-           round(avg(CAST(val_cmomediasemanal AS DOUBLE)), 2) AS cmo_medio
+           round(avg(val_cmomediasemanal), 2) AS cmo_medio
     FROM read_parquet('lake/ons/cmo-semanal/**/*.parquet', hive_partitioning = true, union_by_name = true)
     WHERE ano = 2026
     GROUP BY 1, 2

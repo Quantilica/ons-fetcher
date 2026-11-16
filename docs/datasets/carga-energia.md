@@ -16,8 +16,7 @@ dataset:
   unidades_de_medida:
     val_cargaenergiamwmed: "MWmed"
   dados_pessoais: nenhum
-  eras:
-    - {desde: 2022, mudanca: "`val_cargaenergiamwmed`: texto até 2021, decimal desde 2022"}
+  eras: []
   revisado_em: 2026-11-15
   versao_fetcher: 0.3.0
 ---
@@ -49,7 +48,7 @@ Carga de energia por subsistema em base diária, em MWmed: quanto o Sistema Inte
 | Colunas | 4 |
 | Unidades de medida | `val_cargaenergiamwmed`: MWmed |
 | Dados pessoais | nenhum |
-| Eras | 2022: `val_cargaenergiamwmed`: texto até 2021, decimal desde 2022 |
+| Eras | nenhuma |
 | Revisado em | 2026-11-15 |
 | Versão do fetcher | 0.3.0 |
 
@@ -64,8 +63,6 @@ Carga de energia por subsistema em base diária, em MWmed: quanto o Sistema Inte
 
 - Unidade de análise: a carga de um subsistema em um dia.
 - 27 arquivos convertidos (todos os publicados), de 2000 a 2026: 1.464 linhas no primeiro e 1.268 no último; 39.257 linhas no total. O arquivo do ano corrente cresce a cada atualização.
-- Mudanças de tipo entre arquivos (conferidas nos Parquet convertidos):
-    - 2022: `val_cargaenergiamwmed`: texto até 2021, decimal desde 2022.
 
 ## Variáveis
 
@@ -76,20 +73,19 @@ Descrições do dicionário de dados do ONS (JSON publicado com o conjunto). O c
 | `id_subsistema` | `id_subsistema` | texto | Código do Subsistema | — | todo |
 | `nom_subsistema` | `nom_subsistema` | texto | Nome do Subsistema | — | todo |
 | `din_instante` | `din_instante` | data e hora | Data de referência | — | todo |
-| `val_cargaenergiamwmed` | `val_cargaenergiamwmed` | decimal (texto em parte dos arquivos) | Valor da Carga de Energia, em MWmed | MWmed | todo |
+| `val_cargaenergiamwmed` | `val_cargaenergiamwmed` | decimal | Valor da Carga de Energia, em MWmed | MWmed | todo |
 | `ano` | — (partição) | inteiro | Ano do arquivo de origem | — | todo |
 
 ## No lake
 
 - Dataset `ons/carga-energia`, particionado por `ano`; um Parquet por arquivo de origem.
-- O conversor lê o Parquet ou o CSV (separador `;`, vírgula decimal, UTF-8 ou ISO-8859-1; os CSV do ONS usam ponto decimal, então as colunas numéricas lidas de CSV ficam como texto), normaliza os nomes de coluna e **mantém os tipos do arquivo de origem**: não converte texto em número nem em data.
+- O conversor lê o Parquet ou o CSV (separador `;`, UTF-8 ou ISO-8859-1), detecta o separador decimal de cada coluna numérica (os CSV do ONS usam ponto decimal), normaliza os nomes de coluna e grava as colunas numéricas como `double` em todos os anos, inclusive as que o ONS publica como texto (oito casas decimais, zero como `0E-8`); texto vazio vira nulo. Códigos, nomes e datas **mantêm o tipo do arquivo de origem**.
 - A partição vem do nome do arquivo (`CARGA_ENERGIA_AAAA`); se o arquivo não tiver a coluna, o conversor a acrescenta.
 
 ## Cuidados de uso
 
 - **Cada arquivo é a série do período, com o ano corrente em atualização.** O ONS reenvia o arquivo do ano (ou do mês) corrente e avisa que os dados passam por consistência; valores já publicados podem mudar. Reconverta depois de cada atualização antes de fechar um período.
 - **A definição de carga mudou três vezes.** Até 2021-02, a carga é a atendida por usinas despachadas ou programadas pelo ONS; de 2021-03 a 2023-04, soma a previsão de geração das usinas não despachadas; desde 2023-04-29, soma também a micro e minigeração distribuída (MMGD) estimada. Séries que atravessam essas datas não são comparáveis sem ajuste (descrição oficial do conjunto).
-- **Colunas numéricas com tipo misto entre arquivos.** 1 coluna(s) (`val_cargaenergiamwmed`) chegam como texto em alguns anos e como decimal em outros (o texto traz oito casas decimais e o zero como `0E-8`); veja as mudanças acima. Ao ler vários anos juntos, converta com `CAST(... AS DOUBLE)`.
 
 ## Exemplos
 
@@ -101,7 +97,7 @@ import duckdb
 duckdb.sql("""
     SELECT date_trunc('month', din_instante) AS mes, round(avg(dia), 0) AS carga_media_mwmed
     FROM (
-      SELECT din_instante, sum(CAST(val_cargaenergiamwmed AS DOUBLE)) AS dia
+      SELECT din_instante, sum(val_cargaenergiamwmed) AS dia
       FROM read_parquet('lake/ons/carga-energia/**/*.parquet', hive_partitioning = true, union_by_name = true)
       WHERE ano = 2026
       GROUP BY 1

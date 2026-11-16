@@ -25,7 +25,7 @@
     {
       "nome": "ear_max_ree",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"
@@ -33,7 +33,7 @@
     {
       "nome": "ear_verif_ree_mwmes",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"
@@ -41,7 +41,7 @@
     {
       "nome": "ear_verif_ree_percentual",
       "tipos": [
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2016",
       "periodo_fim": "2026"

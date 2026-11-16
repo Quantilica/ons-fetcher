@@ -34,8 +34,7 @@
     {
       "nome": "val_gerhidraulica",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
@@ -43,8 +42,7 @@
     {
       "nome": "val_gertermica",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
@@ -52,8 +50,7 @@
     {
       "nome": "val_gereolica",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
@@ -61,8 +58,7 @@
     {
       "nome": "val_gersolar",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
@@ -70,8 +66,7 @@
     {
       "nome": "val_carga",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
@@ -79,8 +74,7 @@
     {
       "nome": "val_intercambio",
       "tipos": [
-        "double",
-        "large_string"
+        "double"
       ],
       "periodo_inicio": "2000",
       "periodo_fim": "2026"
