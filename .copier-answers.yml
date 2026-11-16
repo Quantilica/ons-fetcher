@@ -1,10 +1,15 @@
-_commit: v0.1.0
+_commit: v0.2.1
 _src_path: /home/dk/code/Quantilica/fetcher-template
 author_email: daniel@dkko.me
 author_name: Komesu, D.K.
+cadencia: daily
 description: Coletor e conversor Lake Hive de dados abertos do ONS
 domain: energia
+dominio: energia
 has_lake: true
+homepage: https://dados.ons.org.br
+licenca: Creative Commons Atribuição (CC BY)
+orgao: Operador Nacional do Sistema Elétrico (ONS)
 package_name: ons-fetcher
 package_slug: ons_fetcher
 protocol: ckan
