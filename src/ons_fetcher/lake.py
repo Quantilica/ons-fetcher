@@ -23,6 +23,7 @@ except ImportError as exc:
     ) from exc
 
 from .constants import R1_DATASETS_META
+from .tipos import COLUNAS_NUMERICAS
 
 SOURCE_ID = "ons"
 DATASETS = list(R1_DATASETS_META.keys())
@@ -32,6 +33,82 @@ def _norm_col(col_name: str) -> str:
     s = unicodedata.normalize("NFKD", col_name)
     s = s.encode("ascii", "ignore").decode("ascii")
     return re.sub(r"[^a-z0-9]+", "_", s.lower()).strip("_")
+
+
+_CSV_ENCODINGS = ("utf-8", "iso-8859-1")
+
+
+def _ler_csv(path: Path, numericas: frozenset[str]) -> pl.DataFrame:
+    """Le um CSV do ONS (``;``, UTF-8 ou ISO-8859-1).
+
+    Nao assume o separador decimal: as colunas numericas do dataset entram como
+    texto e ``converter_numericas`` decide ponto ou virgula por coluna. As
+    demais seguem a inferencia do polars (codigos e textos nao viram numero).
+    """
+    erro: Exception | None = None
+    for encoding in _CSV_ENCODINGS:
+        try:
+            cabecalho = pl.read_csv(path, separator=";", encoding=encoding, n_rows=0)
+            como_texto = {
+                c: pl.String for c in cabecalho.columns if _norm_col(c) in numericas
+            }
+            return pl.read_csv(
+                path,
+                separator=";",
+                encoding=encoding,
+                infer_schema_length=10000,
+                schema_overrides=como_texto,
+            )
+        except Exception as exc:
+            erro = exc
+    assert erro is not None
+    raise erro
+
+
+def _serie_numerica(serie: pl.Series, dataset: str) -> pl.Series:
+    """Converte uma coluna para ``Float64`` sem perder valor.
+
+    Texto: apara espacos, trata vazio como nulo e detecta o separador decimal
+    pelos proprios valores da coluna (virgula ou ponto; os dois juntos sao
+    ambiguos e dao erro). ``0E-8`` vira zero. Valor nao nulo que nao vira
+    numero e erro, nunca nulo.
+    """
+    if serie.dtype != pl.String:
+        return serie.cast(pl.Float64)
+
+    texto = serie.str.strip_chars()
+    texto = texto.set((texto == "").fill_null(False), None)
+    tem_virgula = bool(texto.str.contains(",").any())
+    tem_ponto = bool(texto.str.contains(r"\.").any())
+    if tem_virgula and tem_ponto:
+        raise ValueError(
+            f"{dataset}.{serie.name}: virgula e ponto na mesma coluna, "
+            "separador decimal ambiguo"
+        )
+    if tem_virgula:
+        texto = texto.str.replace_all(",", ".", literal=True)
+
+    numero = texto.cast(pl.Float64, strict=False)
+    perdidos = texto.is_not_null() & numero.is_null()
+    if perdidos.any():
+        exemplos = texto.filter(perdidos).unique().head(3).to_list()
+        raise ValueError(
+            f"{dataset}.{serie.name}: {perdidos.sum()} valores nao numericos, "
+            f"p.ex. {exemplos}"
+        )
+    return numero
+
+
+def converter_numericas(df: pl.DataFrame, dataset: str) -> pl.DataFrame:
+    """Grava como ``Float64`` as colunas numericas do dataset (``tipos.py``).
+
+    O numero de linhas nao muda e nenhum valor nao nulo vira nulo; o texto
+    vazio (so ocorre no Parquet antigo) passa a nulo, como no CSV de origem.
+    """
+    colunas = [c for c in COLUNAS_NUMERICAS.get(dataset, ()) if c in df.columns]
+    if not colunas:
+        return df
+    return df.with_columns(_serie_numerica(df[c], dataset).alias(c) for c in colunas)
 
 
 def _match_dataset_and_partition(
@@ -178,27 +255,15 @@ class OnsLakeConverter:
                 if raw_file.suffix.lower() == ".parquet":
                     df = pl.read_parquet(raw_file)
                 else:
-                    # CSV fallback
-                    try:
-                        df = pl.read_csv(
-                            raw_file,
-                            separator=";",
-                            decimal_comma=True,
-                            encoding="utf-8",
-                            infer_schema_length=10000,
-                        )
-                    except Exception:
-                        df = pl.read_csv(
-                            raw_file,
-                            separator=";",
-                            decimal_comma=True,
-                            encoding="iso-8859-1",
-                            infer_schema_length=10000,
-                        )
+                    df = _ler_csv(
+                        raw_file, frozenset(COLUNAS_NUMERICAS.get(dataset_id, ()))
+                    )
 
                 # Normalize columns
                 col_renames = {_norm_col(c): c for c in df.columns}
                 df = df.rename({orig: norm for norm, orig in col_renames.items()})
+
+                df = converter_numericas(df, dataset_id)
 
                 # Ensure partition columns exist in df
                 for p_col, p_val in partitions.items():
