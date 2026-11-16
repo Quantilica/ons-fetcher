@@ -1,0 +1,33 @@
+{
+  "fonte": "ons",
+  "dataset": "carga-mensal",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "din_instante",
+      "tipos": [
+        "timestamp[us]"
+      ]
+    },
+    {
+      "nome": "val_cargaenergiamwmed",
+      "tipos": [
+        "large_string"
+      ]
+    }
+  ],
+  "arquivos": 1
+}

@@ -1,0 +1,153 @@
+{
+  "fonte": "ons",
+  "dataset": "reservatorio",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [],
+  "colunas": [
+    {
+      "nome": "nom_reservatorio",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "tip_reservatorio",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "cod_resplanejamento",
+      "tipos": [
+        "int32"
+      ]
+    },
+    {
+      "nome": "cod_posto",
+      "tipos": [
+        "int32"
+      ]
+    },
+    {
+      "nome": "nom_usina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "ceg",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_bacia",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_rio",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_ree",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "dat_entrada",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_cotamaxima",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_cotaminima",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_volmax",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_volmin",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_volutiltot",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_produtibilidadeespecifica",
+      "tipos": [
+        "double"
+      ]
+    },
+    {
+      "nome": "val_produtividade65volutil",
+      "tipos": [
+        "double"
+      ]
+    },
+    {
+      "nome": "val_tipoperda",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_perda",
+      "tipos": [
+        "double"
+      ]
+    },
+    {
+      "nome": "val_latitude",
+      "tipos": [
+        "double"
+      ]
+    },
+    {
+      "nome": "val_longitude",
+      "tipos": [
+        "double"
+      ]
+    },
+    {
+      "nome": "res_id",
+      "tipos": [
+        "large_string"
+      ]
+    }
+  ],
+  "arquivos": 1
+}

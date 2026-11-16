@@ -1,0 +1,211 @@
+{
+  "fonte": "ons",
+  "dataset": "ear-diario-por-reservatorio",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "nom_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "cod_resplanejamento",
+      "tipos": [
+        "int32"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "tip_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_bacia",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_ree",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_subsistema_jusante",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema_jusante",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ear_data",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ear_reservatorio_subsistema_proprio_mwmes",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ear_reservatorio_subsistema_jusante_mwmes",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "earmax_reservatorio_subsistema_proprio_mwmes",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "earmax_reservatorio_subsistema_jusante_mwmes",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ear_reservatorio_percentual",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ear_total_mwmes",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ear_maxima_total_mwmes",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearbacia",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearmaxbacia",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearsubsistema",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearmaxsubsistema",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearsubsistemajusante",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearmaxsubsistemajusante",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearsin",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_contribearmaxsin",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 27
+}

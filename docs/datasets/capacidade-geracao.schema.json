@@ -1,0 +1,117 @@
+{
+  "fonte": "ons",
+  "dataset": "capacidade-geracao",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "id_estado",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_estado",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_modalidadeoperacao",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_agenteproprietario",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_agenteoperador",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_tipousina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_usina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "ceg",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_unidadegeradora",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "cod_equipamento",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "num_unidadegeradora",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_combustivel",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "dat_entradateste",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "dat_entradaoperacao",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "dat_desativacao",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "val_potenciaefetiva",
+      "tipos": [
+        "double"
+      ]
+    }
+  ],
+  "arquivos": 1
+}

@@ -1,0 +1,123 @@
+{
+  "fonte": "ons",
+  "dataset": "ena-diario-por-reservatorio",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "nom_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "cod_resplanejamento",
+      "tipos": [
+        "int32"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "tip_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_bacia",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_ree",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_data",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_bruta_res_mwmed",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_bruta_res_percentualmlt",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_armazenavel_res_mwmed",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_armazenavel_res_percentualmlt",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_queda_bruta",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "mlt_ena",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 27
+}

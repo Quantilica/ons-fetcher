@@ -1,0 +1,212 @@
+{
+  "fonte": "ons",
+  "dataset": "dados-hidrologicos-res",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "tip_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_bacia",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_ree",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_reservatorio",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "num_ordemcs",
+      "tipos": [
+        "int32"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "cod_usina",
+      "tipos": [
+        "int32"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "din_instante",
+      "tipos": [
+        "timestamp[ns]",
+        "timestamp[us]"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_nivelmontante",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_niveljusante",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_volumeutilcon",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaoafluente",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaoturbinada",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaovertida",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaooutrasestruturas",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaodefluente",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaotransferida",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaonatural",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaoartificial",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaoincremental",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaoevaporacaoliquida",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaousoconsuntivo",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_vazaoincrementalbruta",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "1960",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 62
+}

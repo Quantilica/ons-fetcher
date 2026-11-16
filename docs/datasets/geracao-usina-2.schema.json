@@ -1,0 +1,117 @@
+{
+  "fonte": "ons",
+  "dataset": "geracao-usina-2",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano",
+    "mes"
+  ],
+  "colunas": [
+    {
+      "nome": "din_instante",
+      "tipos": [
+        "timestamp[ns]"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "id_estado",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "nom_estado",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "cod_modalidadeoperacao",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "nom_tipousina",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "nom_tipocombustivel",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "nom_usina",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "id_ons",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "ceg",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "val_geracao",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    },
+    {
+      "nome": "periodicidade",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2022-01",
+      "periodo_fim": "2026-10"
+    }
+  ],
+  "arquivos": 6
+}

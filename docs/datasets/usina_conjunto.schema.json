@@ -1,0 +1,93 @@
+{
+  "fonte": "ons",
+  "dataset": "usina_conjunto",
+  "gerado_em": "2026-11-16T00:32:45+00:00",
+  "particoes": [],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "estad_id",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_estado",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "id_tipousina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_tipousina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "id_conjuntousina",
+      "tipos": [
+        "int32"
+      ]
+    },
+    {
+      "nome": "id_ons_conjunto",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "id_ons_usina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_conjunto",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "nom_usina",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "ceg",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "dat_iniciorelacionamento",
+      "tipos": [
+        "large_string"
+      ]
+    },
+    {
+      "nome": "dat_fimrelacionamento",
+      "tipos": [
+        "large_string"
+      ]
+    }
+  ],
+  "arquivos": 1
+}

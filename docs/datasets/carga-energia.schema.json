@@ -1,0 +1,45 @@
+{
+  "fonte": "ons",
+  "dataset": "carga-energia",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "din_instante",
+      "tipos": [
+        "timestamp[ns]",
+        "timestamp[us]"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_cargaenergiamwmed",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 27
+}

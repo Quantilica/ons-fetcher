@@ -1,0 +1,101 @@
+{
+  "fonte": "ons",
+  "dataset": "cvu-usitermica",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "dat_iniciosemana",
+      "tipos": [
+        "timestamp[ns]",
+        "timestamp[us]"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "dat_fimsemana",
+      "tipos": [
+        "timestamp[ns]",
+        "timestamp[us]"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ano_referencia",
+      "tipos": [
+        "int64"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "mes_referencia",
+      "tipos": [
+        "int64"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "num_revisao",
+      "tipos": [
+        "int64"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_semanaoperativa",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "cod_usinaplanejamento",
+      "tipos": [
+        "int64"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_usina",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_cvu",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 22
+}

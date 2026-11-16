@@ -1,0 +1,67 @@
+{
+  "fonte": "ons",
+  "dataset": "ena-diario-por-subsistema",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_data",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_bruta_regiao_mwmed",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_bruta_regiao_percentualmlt",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_armazenavel_regiao_mwmed",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "ena_armazenavel_regiao_percentualmlt",
+      "tipos": [
+        "double"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 27
+}

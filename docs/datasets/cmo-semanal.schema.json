@@ -1,0 +1,72 @@
+{
+  "fonte": "ons",
+  "dataset": "cmo-semanal",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "id_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "din_instante",
+      "tipos": [
+        "timestamp[ns]",
+        "timestamp[us]"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_cmomediasemanal",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_cmoleve",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_cmomedia",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_cmopesada",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2005",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 22
+}

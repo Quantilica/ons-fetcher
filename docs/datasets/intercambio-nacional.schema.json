@@ -1,0 +1,70 @@
+{
+  "fonte": "ons",
+  "dataset": "intercambio-nacional",
+  "gerado_em": "2026-11-16T00:31:11+00:00",
+  "particoes": [
+    "ano"
+  ],
+  "colunas": [
+    {
+      "nome": "din_instante",
+      "tipos": [
+        "large_string",
+        "timestamp[ns]",
+        "timestamp[us]"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_subsistema_origem",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema_origem",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "id_subsistema_destino",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "nom_subsistema_destino",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_intercambiomwmed",
+      "tipos": [
+        "double",
+        "large_string"
+      ],
+      "periodo_inicio": "2000",
+      "periodo_fim": "2026"
+    },
+    {
+      "nome": "val_intercambioprogmwmed",
+      "tipos": [
+        "large_string"
+      ],
+      "periodo_inicio": "2026",
+      "periodo_fim": "2026"
+    }
+  ],
+  "arquivos": 27
+}
