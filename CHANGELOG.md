@@ -7,6 +7,8 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Não lançado]
 
+
+## [0.4.0] - 2026-11-16
 ### Adicionado
 - Testes: identidade do registro conferida.
 - Documentação dos dados em `docs/`, conforme a norma de documentação dos dados: página da fonte, página e esquema de referência para cada um dos 23 datasets, com o dicionário de todas as variáveis. Um teste a verifica.
