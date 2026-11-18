@@ -8,7 +8,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ## [Não lançado]
 
 ### Corrigido
-- `lake`: o build sem mudança não lê mais o bruto. Antes de ler o Parquet ou o CSV, confere no rodapé do Parquet do lake se o arquivo já está em dia e, estando, só conta `skipped`. Mesma contagem de `converted`/`skipped`/`errors`; `force` e bruto novo seguem convertendo.
+- `lake`: o build sem mudança não lê mais o bruto. Antes de ler o Parquet ou o CSV, confere no rodapé do Parquet do lake se o arquivo já está em dia e, estando, só conta `skipped`. Mesma contagem de `converted`/`skipped`/`errors`; `force` e bruto novo seguem convertendo.  Exige `quantilica-analytics>=0.14.0` (o sha256 do bruto sai do sidecar, sem lê-lo). Os testes usam sidecar e espiam as leituras do bruto.
 
 ### Alterado
 - CI e infraestrutura alinhados ao template (fetcher-template v0.2.1).
