@@ -251,6 +251,12 @@ class OnsLakeConverter:
             writer = writers[dataset_id]
 
             try:
+                # Em dia no lake: pula antes de ler o bruto (pode estar numa
+                # montagem de rede lenta); a decisao usa so o sidecar e o rodape.
+                if writer.is_current(raw_file, partitions=partitions or None):
+                    res.skipped += 1
+                    continue
+
                 # Read data
                 if raw_file.suffix.lower() == ".parquet":
                     df = pl.read_parquet(raw_file)
